@@ -18,8 +18,8 @@ E	03004013	-	Printing cannot be initiated while AMS is drying.
 E	03004014	-	Homing Z axis failed: temperature control abnormality.
 E	03004015	-	Nozzle clumping detection calibration failed. Please go to 'Assistant' for troubleshooting.
 E	03004016	-	Nozzle cleaning failed. Please click the Assistant for troubleshooting.
-E	0300401F	H2D	The right hotend is not installed, and the toolhead cannot perform homing. Please install the hotend and then continue.
 E	0300401F	-	The hotend is not installed, and the toolhead cannot perform homing. Please install the hotend and then continue.
+E	0300401F	H2D	The right hotend is not installed, and the toolhead cannot perform homing. Please install the hotend and then continue.
 E	03004020	-	The nozzle presence detection failed. Please check the Assistant for details.
 E	03004021	-	Nozzle offset calibration sensor signal abnormality detected. Please check the sensor and retry.
 E	03004042	-	The Laser Safety Window is not properly installed. The task has been stopped.
@@ -66,8 +66,8 @@ E	03008021	-	The nozzle may not be installed or not properly installed. Please e
 E	03008022	-	The heatbed may be obstructed while moving downward. Please clear any objects beneath the heatbed and check for any resistance or jamming during its movement.
 E	03008028	-	Nozzle offset calibration sensor error. If using a single hotend or the calibration function is disabled, you may ignore this and continue printing; otherwise, it is recommended to check the sensor before proceeding.
 E	03008041	-	Platform detection timeout: please restart the printer.
-E	03008042	P2S	Task paused because the door is open.
 E	03008042	-	Task paused because the door or top cover is open.
+E	03008042	P2S	Task paused because the door is open.
 E	03008043	-	The laser module is abnormal.
 E	03008044	-	Fire was detected inside the chamber.
 E	03008045	-	Material detection timeout: please restart the printer.
@@ -148,10 +148,10 @@ E	0500402A	-	Failed to connect to the router, which may be caused by wireless in
 E	0500402B	-	Router connection failed due to incorrect password. Please check the password and try again.
 E	0500402C	-	Failed to obtain IP address, which may be caused by wireless interference resulting in data transmission failure or the DHCP address pool of the router being full. Please move the printer closer to the router and try again. If the issue persists, please check router settings to see whether the IP addresses have been exhausted.
 E	0500402D	-	System exception
-E	0500402E	-	The system does not support the file system currently used by the MicroSD card. Please replace the MicroSD card or format it to FAT32.
 E	0500402E	P2S,H2S,H2D	System does not support the file system currently used by the USB flash drive. Please replace or format the USB flash drive to FAT32.
-E	0500402F	P2S,H2S,H2D	USB flash drive sector data is damaged; please format it. If it still cannot be recognized, please replace the USB flash drive.
+E	0500402E	-	The system does not support the file system currently used by the MicroSD card. Please replace the MicroSD card or format it to FAT32.
 E	0500402F	-	The MicroSD card sector data is damaged. Please use the SD card repair tool to repair or format it. If it still cannot be identified, please replace the MicroSD card.
+E	0500402F	P2S,H2S,H2D	USB flash drive sector data is damaged; please format it. If it still cannot be recognized, please replace the USB flash drive.
 E	05004030	-	The device is currently upgrading. Please try again when it is idle.
 E	05004031	-	The accessory firmware does not match the printer. Please update it on the 'Firmware' page.
 E	05004033	-	The AMS firmware does not match the printer. Please update it on the 'Firmware' page.
@@ -197,6 +197,7 @@ E	050040A4	-	The current firmware only supports 1 AMS Lite. Please remove all AM
 E	050040A5	-	The current firmware only supports AMS/AMS 2 Pro/AMS HT, with a maximum of 4 units. Please remove all AMS units before reconnecting the supported one.
 E	050040A6	-	File download failed due to missing certificates. Please check the Fleet Hub certificate configuration and restart the printer before trying again
 E	050040A8	-	The device firmware requires a repair upgrade, and the current operation cannot be performed. Please upgrade it on the "Firmware" page.
+E	050040B4	-	Task execution error. Please restart the device. If the issue persists, contact technical support.
 E	050040C0	-	Communication error detected with AMS, AMS Lite or AMS HT. Please reconnect the module cable or restart the printer when it is idle.
 E	05008013	-	The print file is not available. Please check to see if the storage media has been removed.
 E	05008030	-	
@@ -206,8 +207,8 @@ E	05008040	-	Toolhead front cover is detached. Moving the toolhead may damage th
 E	05008041	-	The filament in hotend is too cold. Extrusion may damage the extruder. Still feeding in/out the filament?
 E	05008048	-	The module on the toolhead is not calibrated. Please cancel the task to perform calibration or switch to a calibrated module.
 E	05008051	-	Detected build plate is not the same as the Gcode file. Please adjust slicer settings or use the correct plate.
-E	05008053	-	Nozzle mismatch was detected during printing. Please initiate the print after re-slicing, or continue printing after replacing with the correct nozzle. Caution: the hotend temperature is high.
 E	05008053	H2D	The left and right nozzle is not matched with slicing file. Please initiate the print after re-slicing, or continue printing after replacing with the correct nozzle. Caution: the hotend temperature is high.
+E	05008053	-	Nozzle mismatch was detected during printing. Please initiate the print after re-slicing, or continue printing after replacing with the correct nozzle. Caution: the hotend temperature is high.
 E	05008055	-	Laser module is installed, but a Cutting Platform is detected. Please place a Laser Platform and perform laser calibration.
 E	05008056	-	Cutting module is installed, but the laser platform is detected. Please place the cutting platform for calibration.
 E	05008057	-	The filament hardness selected in the slicer exceeds the current nozzle hardness. Continuing the print may cause nozzle wear, leading to leakage and unstable flow. Please proceed with caution.
@@ -266,8 +267,8 @@ E	05008092	-	Toolhead Camera initialization failed. This print can still continu
 E	05008093	-	The nozzle silicone sleeve is not installed; there is a risk of temperature control failure. Please install it correctly and try again.
 E	0500809B	-	Build plate not properly positioned, may collide with the waste chute. Please reposition build plate and align with heatbed.
 E	050080A0	-	The visual encoder board was not detected. Please check if the board is properly placed and aligned at all four corners, and ensure the positioning markings are clear and free from wear.
-E	0500C010	-	MicroSD Card read/write exception: please reinsert or replace the MicroSD Card.
 E	0500C010	P2S,H2S,H2D	USB flash drive read-write exception; please reinsert or replace it.
+E	0500C010	-	MicroSD Card read/write exception: please reinsert or replace the MicroSD Card.
 E	0500C011	-	
 E	0500C011	P1P,P1S	SD card performance has degraded, which may affect printing, logging, and video. Try formatting it. If issues persist, please replace the SD card.
 E	0500C032	-	Laser/Cutting module connected to the toolhead. The drying process has been automatically stopped.
@@ -341,6 +342,12 @@ E	0502C026	-	The device is busy with the current task and cannot perform this op
 E	0502C028	-	The filament currently loaded in the extruder does not support manual feeding.
 E	0502C031	-	Please check and remove any printed parts or debris from the heatbed surface before continuing the cold pull.
 E	0502C032	-	Please check and remove any printed parts or debris from the heatbed surface and underside before continuing the drying process.
+E	0502C03A	-	Device is busy. Free move cannot be enabled. Try again when the device is idle.
+E	0502C03D	-	Hotend temperature below 170°C. Extrusion control unavailable.
+E	0502C03E	-	Device busy. Cannot set hotend temperature.
+E	0502C03F	-	No available hotend. Nozzle offset calibration cannot start.
+E	0502C042	-	Please check and remove any printed parts or debris from the Heatbed surface before continuing the cold pull.
+E	0502C043	-	Please check and remove any printed objects or foreign matter from the surface and bottom of the Heatbed, then proceed with drying.
 E	05034098	-	The device cannot detect AMS D. Please reconnect the AMS cable or restart the printer.
 E	0503409D	-	The firmware of AMS D does not match the printer; the device cannot continue working. Please update it on the 'Firmware' page.
 E	050340A3	-	AMS(or AMS lite) D communication is abnormal. Please reconnect the module cable or restart the printer.
@@ -385,8 +392,8 @@ E	07008002	-	The cutter is stuck. Please make sure the cutter handle is out.
 E	07008003	-	Failed to pull out the filament from the extruder. This might be caused by clogged extruder or filament broken inside the extruder.
 E	07008004	-	AMS failed to pull back filament. This could be due to a stuck spool or the end of the filament being stuck in the path.
 E	07008005	-	The AMS failed to send out filament. You can clip the end of your filament flat, and reinsert. If this message persists, please check the PTFE tubes in AMS for any signs of wear and tear.
-E	07008006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
 E	07008006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
+E	07008006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
 E	07008007	-	Extruding filament failed. The extruder might be clogged.
 E	07008007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
 E	0700800A	-	PTFE tube disconnection detected. Please check if the PTFE tube from AMS A to the extruder is properly connected.
@@ -412,10 +419,10 @@ E	07018002	-	The cutter is stuck. Please make sure the cutter handle is out.
 E	07018003	-	Failed to pull out the filament from the extruder. This might be caused by clogged extruder or filament broken inside the extruder.
 E	07018004	-	AMS failed to pull back filament. This could be due to a stuck spool or the end of the filament being stuck in the path.
 E	07018005	-	The AMS failed to send out filament. You can clip the end of your filament flat, and reinsert. If this message persists, please check the PTFE tubes in AMS for any signs of wear and tear.
-E	07018006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
 E	07018006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
-E	07018007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
+E	07018006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
 E	07018007	-	Extruding filament failed. The extruder might be clogged.
+E	07018007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
 E	0701800A	-	PTFE tube disconnection detected. Please check if the PTFE tube from AMS B to the extruder is properly connected.
 E	07018010	-	The AMS assist motor is overloaded. This could be due to entangled filament or a stuck spool.
 E	07018011	-	AMS filament ran out. Please insert a new filament into the same AMS slot.
@@ -439,8 +446,8 @@ E	07028002	-	The cutter is stuck. Please make sure the cutter handle is out.
 E	07028003	-	Failed to pull out the filament from the extruder. This might be caused by clogged extruder or filament broken inside the extruder.
 E	07028004	-	AMS failed to pull back filament. This could be due to a stuck spool or the end of the filament being stuck in the path.
 E	07028005	-	The AMS failed to send out filament. You can clip the end of your filament flat, and reinsert. If this message persists, please check the PTFE tubes in AMS for any signs of wear and tear.
-E	07028006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
 E	07028006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
+E	07028006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
 E	07028007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
 E	07028007	-	Extruding filament failed. The extruder might be clogged.
 E	0702800A	-	PTFE tube disconnection detected. Please check if the PTFE tube from AMS C to the extruder is properly connected.
@@ -524,8 +531,8 @@ E	07064025	-	Failed to read the filament information.
 E	07068003	-	Failed to pull out the filament from the extruder. This might be caused by clogged extruder or filament broken inside the extruder.
 E	07068004	-	AMS failed to pull back filament. This could be due to a stuck spool or the end of the filament being stuck in the path.
 E	07068005	-	The AMS failed to send out filament. You can clip the end of your filament flat, and reinsert. If this message persists, please check the PTFE tubes in AMS for any signs of wear and tear.
-E	07068006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
 E	07068006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
+E	07068006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
 E	07068007	-	Extruding filament failed. The extruder might be clogged.
 E	07068007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
 E	0706800A	-	PTFE tube disconnection detected. Please check if the PTFE tube from AMS G to the extruder is properly connected.
@@ -541,8 +548,8 @@ E	07074025	-	Failed to read the filament information.
 E	07078003	-	Failed to pull out the filament from the extruder. This might be caused by clogged extruder or filament broken inside the extruder.
 E	07078004	-	AMS failed to pull back filament. This could be due to a stuck spool or the end of the filament being stuck in the path.
 E	07078005	-	The AMS failed to send out filament. You can clip the end of your filament flat, and reinsert. If this message persists, please check the PTFE tubes in AMS for any signs of wear and tear.
-E	07078006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
 E	07078006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
+E	07078006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS PTFE tube is connected.
 E	07078007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
 E	07078007	-	Extruding filament failed. The extruder might be clogged.
 E	0707800A	-	PTFE tube disconnection detected. Please check if the PTFE tube from AMS H to the extruder is properly connected.
@@ -589,11 +596,11 @@ E	07FF8003	H2D	Please pull out the filament on the spool holder of the right ext
 E	07FF8004	H2D	Failed to pull back the filament from the right extruder. Please check whether the filament is stuck inside the extruder.
 E	07FF8004	-	Failed to pull back the filament from the toolhead to AMS. Please check whether the filament or the spool is stuck.
 E	07FF8005	-	Failed to feed the filament outside the AMS. Please clip the end of the filament flat and check to see if the spool is stuck.
-E	07FF8006	-	Please feed filament into the PTFE tube until it can not be pushed any farther.
 E	07FF8006	H2D	Please feed filament into the PTFE tube of the right extruder until it can not be pushed any farther.
-E	07FF8007	-	Please observe the nozzle. If the filament has been extruded, select 'Done'; if it has not, please push the filament forward slightly, and then select 'Retry'.
-E	07FF8007	P2S,H2S	Please observe the nozzle. If the filament has been extruded, select 'Continue'; if it has not, please push the filament forward slightly, and then select 'Retry'.
+E	07FF8006	-	Please feed filament into the PTFE tube until it can not be pushed any farther.
 E	07FF8007	H2D	Please observe the nozzle of the right extruder. If the filament has been extruded, select 'Continue'; if it has not, please push the filament forward slightly, and then select 'Retry'.
+E	07FF8007	P2S,H2S	Please observe the nozzle. If the filament has been extruded, select 'Continue'; if it has not, please push the filament forward slightly, and then select 'Retry'.
+E	07FF8007	-	Please observe the nozzle. If the filament has been extruded, select 'Done'; if it has not, please push the filament forward slightly, and then select 'Retry'.
 E	07FF8010	H2D	Check if the right external filament spool or filament is stuck.
 E	07FF8010	-	Check if the external filament spool or filament is stuck.
 E	07FF8011	-	External filament has run out; please load a new filament.
@@ -606,14 +613,14 @@ E	07FF8021	-	AMS setup failed; please refer to the assistant.
 E	07FF8024	-	Extruder position calibration failed; please refer to the assistant.
 E	07FF8025	-	Cold pull timed out. Please promptly operate or check whether the filament is broken inside the extruder, and click the Assistant for details.
 E	07FF8030	-	The filament specified in the slicer has been used up. Printing is paused. Please go to the machine to replace the material and resume printing.
-E	07FFC003	H2D	Please pull out the filament on the spool holder of the right extruder. If this message persists, please check to see if there is filament broken in the extruder or PTFE tube. (Connect a PTFE tube if you are about to use an AMS)
 E	07FFC003	-	Please pull out the filament on the spool holder. If this message persists, please check to see if there is filament broken in the extruder or PTFE tube. (Connect a PTFE tube if you are about to use an AMS)
-E	07FFC006	H2D	Please feed filament into the PTFE tube of the right extruder until it can not be pushed any farther.
+E	07FFC003	H2D	Please pull out the filament on the spool holder of the right extruder. If this message persists, please check to see if there is filament broken in the extruder or PTFE tube. (Connect a PTFE tube if you are about to use an AMS)
 E	07FFC006	-	Please feed filament into the PTFE tube until it can not be pushed any farther.
-E	07FFC008	H2D	Please pull out the filament on the spool holder of the right extruder. If this message persists, please check to see if there is filament broken in the extruder or PTFE tube. (Connect a PTFE tube if you are about to use an AMS)
+E	07FFC006	H2D	Please feed filament into the PTFE tube of the right extruder until it can not be pushed any farther.
 E	07FFC008	-	Please pull out the filament on the spool holder. If this message persists, please check to see if there is filament broken in the extruder. (Connect a PTFE tube if you are about to use an AMS)
-E	07FFC009	H2D	Please feed filament into the PTFE tube of the right extruder until it can not be pushed any farther.
+E	07FFC008	H2D	Please pull out the filament on the spool holder of the right extruder. If this message persists, please check to see if there is filament broken in the extruder or PTFE tube. (Connect a PTFE tube if you are about to use an AMS)
 E	07FFC009	-	Please feed filament into the PTFE tube until it can not be pushed any farther.
+E	07FFC009	H2D	Please feed filament into the PTFE tube of the right extruder until it can not be pushed any farther.
 E	07FFC00A	H2D	Please observe the nozzle of the right extruder. If the filament has been extruded, select 'Continue'; if not, please push the filament forward slightly and then select 'Retry'.
 E	07FFC00A	-	Please observe the nozzle. If the filament has been extruded, select 'Continue'; if not, please push the filament forward slightly and then select 'Retry'.
 E	07FFC010	-	Insert the filament (over 30cm long) until it stops. You might see slight smoke during flushing. After insertion, close the front door and top cover.
@@ -765,8 +772,8 @@ E	18018004	-	AMS-HT failed to pull back filament. This could be due to a stuck s
 E	18018005	-	The AMS-HT failed to send out filament. You can clip the end of your filament flat, and reinsert. If this message persists, please check the PTFE tubes in AMS for any signs of wear and tear.
 E	18018006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
 E	18018006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
-E	18018007	-	Extruding filament failed. The extruder might be clogged.
 E	18018007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
+E	18018007	-	Extruding filament failed. The extruder might be clogged.
 E	1801800A	-	PTFE tube disconnection detected. Please check if the PTFE tube from AMS-HT B to the extruder is properly connected.
 E	18018010	-	The AMS-HT assist motor is overloaded. This could be due to entangled filament or a stuck spool.
 E	18018011	-	AMS-HT filament ran out. Please insert a new filament into the same AMS-HT slot.
@@ -787,8 +794,8 @@ E	18024025	-	Failed to read the filament information.
 E	18028003	-	Failed to pull out the filament from the extruder. This might be caused by clogged extruder or filament broken inside the extruder.
 E	18028004	-	AMS-HT failed to pull back filament. This could be due to a stuck spool or the end of the filament being stuck in the path.
 E	18028005	-	The AMS-HT failed to send out filament. You can clip the end of your filament flat, and reinsert. If this message persists, please check the PTFE tubes in AMS for any signs of wear and tear.
-E	18028006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
 E	18028006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
+E	18028006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
 E	18028007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
 E	18028007	-	Extruding filament failed. The extruder might be clogged.
 E	1802800A	-	PTFE tube disconnection detected. Please check if the PTFE tube from AMS-HT C to the extruder is properly connected.
@@ -811,8 +818,8 @@ E	18034025	-	Failed to read the filament information.
 E	18038003	-	Failed to pull out the filament from the extruder. This might be caused by clogged extruder or filament broken inside the extruder.
 E	18038004	-	AMS-HT failed to pull back filament. This could be due to a stuck spool or the end of the filament being stuck in the path.
 E	18038005	-	The AMS-HT failed to send out filament. You can clip the end of your filament flat, and reinsert. If this message persists, please check the PTFE tubes in AMS for any signs of wear and tear.
-E	18038006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
 E	18038006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
+E	18038006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
 E	18038007	-	Extruding filament failed. The extruder might be clogged.
 E	18038007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
 E	1803800A	-	PTFE tube disconnection detected. Please check if the PTFE tube from AMS-HT D to the extruder is properly connected.
@@ -835,8 +842,8 @@ E	18044025	-	Failed to read the filament information.
 E	18048003	-	Failed to pull out the filament from the extruder. This might be caused by clogged extruder or filament broken inside the extruder.
 E	18048004	-	AMS-HT failed to pull back filament. This could be due to a stuck spool or the end of the filament being stuck in the path.
 E	18048005	-	The AMS-HT failed to send out filament. You can clip the end of your filament flat, and reinsert. If this message persists, please check the PTFE tubes in AMS for any signs of wear and tear.
-E	18048006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
 E	18048006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
+E	18048006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
 E	18048007	-	Extruding filament failed. The extruder might be clogged.
 E	18048007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
 E	1804800A	-	PTFE tube disconnection detected. Please check if the PTFE tube from AMS-HT E to the extruder is properly connected.
@@ -860,8 +867,8 @@ E	18058004	-	AMS-HT failed to pull back filament. This could be due to a stuck s
 E	18058005	-	The AMS-HT failed to send out filament. You can clip the end of your filament flat, and reinsert. If this message persists, please check the PTFE tubes in AMS for any signs of wear and tear.
 E	18058006	-	Unable to feed filament into the extruder. This could be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
 E	18058006	H2D	Unable to feed filament into the extruder. The AMS may be mismatched with the extruder. You can rerun the AMS Setup. This could also be due to an entangled filament or a stuck spool. If not, please check if the AMS-HT PTFE tube is connected.
-E	18058007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
 E	18058007	-	Extruding filament failed. The extruder might be clogged.
+E	18058007	P2S,H2S,H2D	Failed to extrude the filament. Please check Assistant for more details.
 E	1805800A	-	PTFE tube disconnection detected. Please check if the PTFE tube from AMS-HT F to the extruder is properly connected.
 E	18058010	-	The AMS-HT assist motor is overloaded. This could be due to entangled filament or a stuck spool.
 E	18058011	-	AMS-HT filament ran out. Please insert a new filament into the same AMS-HT slot.
@@ -974,20 +981,20 @@ H	030001000001000E	-	The power supply voltage does not match the machine; the he
 H	030001000002000F	-	The chamber target temperature is set too high, while the heatbed target temperature is set too low. Heatbed cooling has been skipped. It is recommended to set matching chamber and heatbed temperatures.
 H	0300010000030008	-	The temperature of the heated bed exceeds the limit and automatically adjusts to the limit temperature.
 H	030001000003000F	-	The chamber temperature is currently high, and the heatbed is cooling down slowly. It is recommended to open the top cover or front door to accelerate the cooling process.
-H	0300020000010001	H2D	The right nozzle temperature is abnormal; the heater may have a short circuit.
 H	0300020000010001	-	The nozzle temperature is abnormal; the heater may have a short circuit.
-H	0300020000010002	-	The nozzle temperature is abnormal; the heater may have an open circuit.
+H	0300020000010001	H2D	The right nozzle temperature is abnormal; the heater may have a short circuit.
 H	0300020000010002	H2D	The right nozzle temperature is abnormal; the heater may have an open circuit.
-H	0300020000010003	-	The nozzle temperature is abnormal; the heater is over temperature.
+H	0300020000010002	-	The nozzle temperature is abnormal; the heater may have an open circuit.
 H	0300020000010003	H2D	The right nozzle temperature is abnormal; the heater is overheated.
-H	0300020000010006	H2D	The right nozzle temperature is abnormal; the sensor may have a short circuit, please check whether the connector is properly plugged in.
+H	0300020000010003	-	The nozzle temperature is abnormal; the heater is over temperature.
 H	0300020000010006	-	The nozzle temperature is abnormal; the sensor may have a short circuit. Please check whether the connector is properly plugged in.
-H	0300020000010007	-	The nozzle temperature is abnormal; the sensor may have an open circuit.
+H	0300020000010006	H2D	The right nozzle temperature is abnormal; the sensor may have a short circuit, please check whether the connector is properly plugged in.
 H	0300020000010007	H2D	The right nozzle temperature is abnormal; the sensor may have an open circuit.
-H	0300020000010008	-	The extruder nozzle temperature is abnormal and cannot reach the set value. This may be caused by an improperly installed nozzle silicone sock.
+H	0300020000010007	-	The nozzle temperature is abnormal; the sensor may have an open circuit.
 H	0300020000010008	H2D	The right extruder nozzle temperature is abnormal and cannot reach the set value. This may be caused by an improperly installed nozzle silicone sock.
-H	0300020000010009	H2D	The right nozzle temperature control is abnormal. The hot end may not be installed. To heat the heating assembly without the hotend, enable Maintenance Mode in the settings.
+H	0300020000010008	-	The extruder nozzle temperature is abnormal and cannot reach the set value. This may be caused by an improperly installed nozzle silicone sock.
 H	0300020000010009	-	Nozzle temperature control is abnormal. The hot end may not be installed. To heat the heating assembly without the hotend, enable Maintenance Mode in the settings.
+H	0300020000010009	H2D	The right nozzle temperature control is abnormal. The hot end may not be installed. To heat the heating assembly without the hotend, enable Maintenance Mode in the settings.
 H	0300030000010001	-	The hotend cooling fan speed is too slow or stopped. It may be stuck or the connector may not be plugged in properly.
 H	0300030000020002	-	The hotend cooling fan is running slowly. It may be obstructed. Please check for debris and clean if necessary.
 H	0300040000020001	-	The speed of the part cooling fan is too slow or stopped. It may be stuck, or the connector may not be plugged in properly.
@@ -1046,11 +1053,11 @@ H	03000D0000020009	-	The build plate may not be properly placed. If this message
 H	03000D000002000A	-	The build plate may not be properly placed. If this message appears repeatedly, please check the Wiki for more explanations.
 H	03000F0000010001	-	Abnormal accelerometer data detected. Please try restarting the printer.
 H	0300100000020001	-	The resonance frequency of the X axis is low. The timing belt may be loose.
-H	0300100000020002	A1,A1MINI,P2S,H2S,H2D	The resonance frequency of the X-axis differs significantly from the last calibration. Please clean the X-axis linear rail and conduct a calibration after printing.
 H	0300100000020002	-	The resonance frequency of the X-axis differs significantly from the last calibration. Please clean the carbon rod and conduct a calibration after printing.
+H	0300100000020002	A1,A1MINI,P2S,H2S,H2D	The resonance frequency of the X-axis differs significantly from the last calibration. Please clean the X-axis linear rail and conduct a calibration after printing.
 H	0300110000020001	-	The resonance frequency of the Y axis is low. The timing belt may be loose.
-H	0300110000020002	-	The resonance frequency of the Y-axis differs greatly from the last calibration. Please clean the Y-axis liner rod and conduct a calibration after printing.
 H	0300110000020002	A1,A1MINI	The resonance frequency of the Y-axis differs greatly from the last calibration. Please clean the Y-axis liner rail and conduct a calibration after printing.
+H	0300110000020002	-	The resonance frequency of the Y-axis differs greatly from the last calibration. Please clean the Y-axis liner rod and conduct a calibration after printing.
 H	0300120000020001	-	The front cover of the toolhead fell off.
 H	0300130000010001	-	The current sensor of Motor-A is abnormal. This may be caused by a failure of the hardware sampling circuit.
 H	0300140000010001	-	The current sensor of Motor-B is abnormal. This may be caused by a failure of the hardware sampling circuit.
@@ -1059,22 +1066,22 @@ H	0300160000010001	-	The extruder servo motor's current sensor is abnormal. A fa
 H	0300170000010001	-	The hotend cooling fan speed is too slow or stopped. It may be stuck or the connector may not be plugged in properly.
 H	0300170000020002	-	The hotend cooling fan speed is slow. It may be stuck and need cleaning.
 H	0300180000000000	-	
-H	0300180000010001	-	The value of extrusion force sensor is low, the nozzle seems to not be installed.
 H	0300180000010001	P2S,H2S	The frequency of the extrusion force sensor is too low. The nozzle may not be installed, or the nozzle heat sink may be too far away from the sensor.
+H	0300180000010001	-	The value of extrusion force sensor is low, the nozzle seems to not be installed.
 H	0300180000010002	-	The sensitivity of the extrusion force sensor is low; the nozzle may not be installed correctly.
 H	0300180000010003	-	The extrusion force sensor is not available; the link between the MC and TH may be broken, or the sensor may be broken.
-H	0300180000010004	-	The data from extrusion force sensor is abnormal; the sensor is probably broken.
 H	0300180000010004	P2S,H2S	The signal of the extrusion force sensor is abnormal. The sensor may be damaged, or the MC-TH communication may be abnormal.
-H	0300180000010005	-	The Z axis motor got stuck during movement; please check if there is any foreign matter on the Z sliders or Z timing belt wheels, or if the extrusion force sensor is abnormal.
+H	0300180000010004	-	The data from extrusion force sensor is abnormal; the sensor is probably broken.
 H	0300180000010005	P2S,H2S	Z-axis motor rotation is obstructed; please check if foreign objects are stuck in the Z slider or Z timing pulley. Also, ensure the build plate is placed correctly to avoid collisions with surrounding structures.
+H	0300180000010005	-	The Z axis motor got stuck during movement; please check if there is any foreign matter on the Z sliders or Z timing belt wheels, or if the extrusion force sensor is abnormal.
 H	0300180000010006	-	The heatbed leveling data is abnormal. Please check whether there are any foreign objects on the heatbed and Z slider. If so, please remove them and try again.
 H	0300180000010007	-	The frequency of the extrusion force sensor is too high. The sensor may be damaged, or the nozzle heat sink may be too close to the sensor.
 H	0300180000010008	-	The nozzle touches the heatbed abnormally. Please check whether there is filament residue on the nozzle or foreign matter where the nozzle touches the bed.
 H	030018000001000B	-	Nozzle presence detection failed: nozzle not installed or improperly installed.
 H	030018000001000C	-	An anomalous jump in the extruder extrusion force sensor data has been detected, potentially caused by poor sensor contact or a faulty sensor.
 H	030018000001000D	-	Nozzle clumping detection calibration failed. Excessive force detected on the nozzle. Please ensure the nozzle is installed correctly.
-H	030018000001000E	-	Nozzle clumping detection calibration failed. The nozzle did not touch the inner wall of the hole. Please clean the nozzle and the steel plate hole at the rear-right side of the heatbed.
 H	030018000001000E	H2S	Nozzle clumping detection calibration failed. The nozzle did not reach the metal sheet at the rear-right of the heatbed. Please clean the nozzle and remove any debris from that sheet.
+H	030018000001000E	-	Nozzle clumping detection calibration failed. The nozzle did not touch the inner wall of the hole. Please clean the nozzle and the steel plate hole at the rear-right side of the heatbed.
 H	0300180000030009	-	Performing initial High-temperature Bed Leveling.
 H	0300190000010001	-	The eddy current sensor on Y-axis is not available; the wire is probably broken.
 H	0300190000020002	-	The sensitivity of the Y-axis eddy current sensor is too low. Please remove any foreign objects on the Y-axis linear rail.
@@ -1092,10 +1099,10 @@ H	03001E0000010006	-	The left nozzle temperature is abnormal; the sensor may hav
 H	03001E0000010007	-	The left nozzle temperature is abnormal; the sensor may have an open circuit.
 H	03001E0000010008	-	The left extruder nozzle temperature is abnormal and cannot reach the set value. This may be caused by an improperly installed nozzle silicone sock.
 H	03001E0000010009	-	The left nozzle temperature control is abnormal; the hot end may not be installed. If you want to heat the hot end without it being installed, please turn on maintenance mode in the settings page.
-H	0300200000010001	-	X-axis homing abnormal: please check if the toolhead is stuck or the carbon rod resistance is too high.
 H	0300200000010001	A1,A1MINI,P2S,H2S,H2D	X-axis homing abnormal: please check if the toolhead is stuck or if the resistance on the X-axis linear rail is too high.
-H	0300200000010002	-	Y-axis homing abnormal: please check if the toolhead is stuck or the Y carriage has too much resistance.
+H	0300200000010001	-	X-axis homing abnormal: please check if the toolhead is stuck or the carbon rod resistance is too high.
 H	0300200000010002	A1,A1MINI	Y axis homing abnormal: Please check if the heatbed is stuck or if the motion resistance is too high.
+H	0300200000010002	-	Y-axis homing abnormal: please check if the toolhead is stuck or the Y carriage has too much resistance.
 H	0300200000010003	-	X axis homing abnormal: the timing belt may be loose.
 H	0300200000010004	-	Y axis homing abnormal: the timing belt may be loose.
 H	0300250000010001	-	The frequency of the extrusion force sensor of the right extruder is too low. The nozzle may not be installed, or the nozzle heat sink may be too far away from the sensor.
@@ -1139,8 +1146,8 @@ H	03002D0000010006	-	Heated bed leveling failed, possibly due to foreign objects
 H	03002D0000030009	-	Performing initial High-temperature Bed Leveling.
 H	0300310000010001	-	The Part Cooling Fan speed is too slow or stopped. It may be stuck, or the connector may not be plugged in properly.
 H	0300310000020002	-	The Part Cooling Fan speed is slow. It may be stuck and need cleaning.
-H	0300320000010001	-	The Auxiliary Part Cooling Fan speed is too slow or stopped. It may be stuck, or the connector may not be plugged in properly.
 H	0300320000010001	P2S	The Right Side (Auxiliary Component Cooling-Filtration) Fan speed is too slow or stopped. It may be stuck, or the connector may not be plugged in properly.
+H	0300320000010001	-	The Auxiliary Part Cooling Fan speed is too slow or stopped. It may be stuck, or the connector may not be plugged in properly.
 H	0300320000010002	-	The Right Side (Auxiliary Component Cooling-Filtration) Fan speed is slow. It may be stuck and need cleaning.
 H	0300320000020002	-	The Auxiliary Part Cooling Fan speed is slow. It may be stuck and need cleaning.
 H	0300330000010001	-	The Chamber Exhaust Fan speed is too slow or stopped. It may be stuck, or the connector may not be plugged in properly.
@@ -1155,6 +1162,8 @@ H	03003A0000010001	-	The Left Side Auxiliary Component Cooling Fan speed is slow
 H	03003A0000020002	-	The Left Side Auxiliary Component Cooling Fan speed is slow. It may be stuck and need cleaning.
 H	0300400000020001	-	Data transmission over the serial port is abnormal; the software system may be faulty.
 H	0300400000020002	-	G-code data error detected. The system has automatically reloaded the G-code and resumed printing.
+H	0300400000020003	-	Sliced file abnormality detected multiple times. Task canceled. Please check the sliced file.
+H	0300400000020004	-	G-code verification error. The system has automatically reacquired the data and resumed printing.
 H	0300410000010001	-	The system voltage is unstable. Triggering the power failure protection function.
 H	0300420000010001	-	Toolhead power abnormality detected; it may be caused by a damaged TH board or a short circuit in the USB-C cable.
 H	0300900000010001	-	Chamber heating failed. The heater may not be blowing hot air.
@@ -1183,8 +1192,8 @@ H	0300930000010001	-	Chamber temperature is abnormal. The chamber heater's tempe
 H	0300930000010002	-	Chamber temperature is abnormal. The chamber heater's temperature sensor may have an open circuit.
 H	0300930000010003	-	Chamber temperature is abnormal. The chamber heater's temperature sensor at the air outlet may have a short circuit.
 H	0300930000010004	-	Chamber temperature is abnormal. The chamber heater's temperature sensor at the air outlet may have an open circuit.
-H	0300930000010005	X1E	Chamber temperature is abnormal. The chamber heater's temperature sensor at the air inlet may have a short circuit.
 H	0300930000010005	-	Chamber temperature is abnormal. The chamber temperature sensor may have a short circuit.
+H	0300930000010005	X1E	Chamber temperature is abnormal. The chamber heater's temperature sensor at the air inlet may have a short circuit.
 H	0300930000010006	-	Chamber temperature is abnormal. The chamber temperature sensor at the air inlet may have an open circuit.
 H	0300930000010006	X1E	Chamber temperature is abnormal. The chamber heater's temperature sensor at the air inlet may have an open circuit.
 H	0300930000010007	-	Chamber temperature is abnormal. The temperature sensor at the power supply may have a short circuit.
@@ -1285,12 +1294,12 @@ H	0500010000020008	-
 H	0500010000020009	-	
 H	0500010000030004	-	Not enough space on MicroSD Card; please clear some space.
 H	0500010000030004	P2S,H2S,H2D	Not enough space on the USB flash drive; please clear some space.
-H	0500010000030005	-	The Micro SD card is in Read-Only mode. Video recording and Timelapse recording cannot be performed. Please refer to the Wiki for assistance.
 H	0500010000030005	P2S,H2S,H2D	The USB drive is in Read-Only mode. Video recording and Timelapse recording cannot be performed. Please refer to the Wiki for assistance.
-H	0500010000030006	-	Unformatted MicroSD Card: please format it.
+H	0500010000030005	-	The Micro SD card is in Read-Only mode. Video recording and Timelapse recording cannot be performed. Please refer to the Wiki for assistance.
 H	0500010000030006	P2S,H2S,H2D	The USB drive is not formatted or cannot be written; please format the USB drive.
-H	0500010000030007	P2S,H2S,H2D	Unable to record time-lapse photography without USB flash drive inserted.
+H	0500010000030006	-	Unformatted MicroSD Card: please format it.
 H	0500010000030007	-	Unable to record time-lapse photography without MicroSD card inserted.
+H	0500010000030007	P2S,H2S,H2D	Unable to record time-lapse photography without USB flash drive inserted.
 H	0500010000030009	-	
 H	0500020000020001	-	Failed to connect to the internet. Please check the network connection.
 H	0500020000020002	-	Device login failed; please check your account information.
@@ -1333,8 +1342,8 @@ H	0500030000020015	-
 H	0500030000020016	-	
 H	0500030000020017	-	
 H	0500030000020018	-	
-H	0500030000020020	-	Micro SD Card capacity is insufficient to cache print files.
 H	0500030000020020	P2S,H2S,H2D	USB flash drive capacity is insufficient to cache print files.
+H	0500030000020020	-	Micro SD Card capacity is insufficient to cache print files.
 H	0500030000020055	-	User information has expired, please log in again.
 H	0500030000030007	-	
 H	0500030000030022	-	MicroSD Card performance degradation has been detected. It may affect print jobs, logs, and video records. Please format or change the MicroSD card.
@@ -1410,6 +1419,7 @@ H	0500050000010016	-	Cutting module certification failed. Please reconnect the c
 H	0500050000010018	-	The Rotary Attachment module certification failed. Please reconnect the cable or restart the printer.
 H	0500050000010019	-	The Auto Fire Extinguishing System certification failed. Please reconnect the module cable or restart the printer.
 H	0500050000010021	-	Time-lapse kit authentication failed. Please reconnect the cable or restart the printer.
+H	0500050000010029	-	MC board certification failed. Possible communication error. Please restart the printer.
 H	0500050000020030	-	
 H	0500050000030002	-	The device is in the engineering state; please pay attention to information security related matters.
 H	0500060000020001	-	The Toolhead Camera is not in place; please check the hardware connection.
@@ -1455,8 +1465,8 @@ H	0501040000010044	-	The firmware of AMS B does not match the printer. Please up
 H	0501040000030001	-	Carbon rods need cleaning now.
 H	0501040000030002	-	Threaded rods need lubrication now.
 H	0501040000030003	-	Linear rods need cleaning and lubrication now.
-H	0501040000030004	H2D	Please clean and lubricate the X-axis linear rail, YZ-axis linear rods, and the extruder lift linear rail.
 H	0501040000030004	-	Please clean and lubricate the X-axis linear rail and YZ-axis linear rods.
+H	0501040000030004	H2D	Please clean and lubricate the X-axis linear rail, YZ-axis linear rods, and the extruder lift linear rail.
 H	0501040000030010	-	Laser module is dusty and needs cleaning now.
 H	0501050000010010	-	The firmware of AMS B does not match the printer. Please update it on the 'Firmware' page.
 H	0501050000010014	-	AMS B certification failed. Please reconnect the cable or restart the printer.
@@ -1702,8 +1712,8 @@ H	0700620000020001	-	The AMS A Slot 3 is overloaded. The filament may be tangled
 H	0700630000020001	-	The AMS A Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0700700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS A Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0700700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
-H	0700700000020002	P2S,H2S,H2D	Failed to feed the AMS A Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	0700700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
+H	0700700000020002	P2S,H2S,H2D	Failed to feed the AMS A Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	0700700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0700700000020004	-	Failed to pull back the filament from the toolhead to AMS. Possible cause: filament or spool stuck.
 H	0700700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS A Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
@@ -1714,14 +1724,17 @@ H	0700700000020007	-	AMS filament ran out. Please put a new filament into the sa
 H	0700700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	0700710000020001	-	Failed to pull out the AMS A Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0700710000020002	-	Failed to feed the AMS A Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0700710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0700710000020004	-	Failed to pull back the AMS A Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0700710000020005	-	Failed to feed the AMS A Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0700720000020001	-	Failed to pull out the AMS A Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0700720000020002	-	Failed to feed the AMS A Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0700720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0700720000020004	-	Failed to pull back the AMS A Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0700720000020005	-	Failed to feed the AMS A Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0700730000020001	-	Failed to pull out the AMS A Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0700730000020002	-	Failed to feed the AMS A Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0700730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0700730000020004	-	Failed to pull back the AMS A Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0700730000020005	-	Failed to feed the AMS A Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0700800000010001	-	AMS A The current sensor of heater 1 is abnormal.
@@ -1951,28 +1964,31 @@ H	0701600000020001	-	The AMS B Slot 1 is overloaded. The filament may be tangled
 H	0701610000020001	-	The AMS B Slot 2 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0701620000020001	-	The AMS B Slot 3 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0701630000020001	-	The AMS B Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
-H	0701700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	0701700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS B Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
-H	0701700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
+H	0701700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	0701700000020002	P2S,H2S,H2D	Failed to feed the AMS B Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0701700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
 H	0701700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0701700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS B Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0701700000020004	-	Failed to pull back the filament from the toolhead to AMS. Possible cause: filament or spool stuck.
-H	0701700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS B Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0701700000020005	-	Failed to feed the filament outside the AMS. Please clip the end of the filament flat and check to see if the spool is stuck.
+H	0701700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS B Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0701700000020006	-	Timeout purging old filament. Possible cause: filament stuck or the extruder/nozzle clog.
 H	0701700000020007	-	AMS filament ran out. Please put a new filament into the same slot in AMS and resume.
 H	0701700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	0701710000020001	-	Failed to pull out the AMS B Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0701710000020002	-	Failed to feed the AMS B Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0701710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0701710000020004	-	Failed to pull back the AMS B Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0701710000020005	-	Failed to feed the AMS B Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0701720000020001	-	Failed to pull out the AMS B Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0701720000020002	-	Failed to feed the AMS B Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0701720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0701720000020004	-	Failed to pull back the AMS B Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0701720000020005	-	Failed to feed the AMS B Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0701730000020001	-	Failed to pull out the AMS B Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0701730000020002	-	Failed to feed the AMS B Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0701730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0701730000020004	-	Failed to pull back the AMS B Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0701730000020005	-	Failed to feed the AMS B Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0701800000010001	-	AMS B The current sensor of heater 1 is abnormal.
@@ -2202,10 +2218,10 @@ H	0702600000020001	-	The AMS C Slot 1 is overloaded. The filament may be tangled
 H	0702610000020001	-	The AMS C Slot 2 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0702620000020001	-	The AMS C Slot 3 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0702630000020001	-	The AMS C Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
-H	0702700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	0702700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS C Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
-H	0702700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
+H	0702700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	0702700000020002	P2S,H2S,H2D	Failed to feed the AMS C Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0702700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
 H	0702700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0702700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS C Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0702700000020004	-	Failed to pull back the filament from the toolhead to AMS. Possible cause: filament or spool stuck.
@@ -2216,14 +2232,17 @@ H	0702700000020007	-	AMS filament ran out. Please put a new filament into the sa
 H	0702700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	0702710000020001	-	Failed to pull out the AMS C Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0702710000020002	-	Failed to feed the AMS C Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0702710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0702710000020004	-	Failed to pull back the AMS C Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0702710000020005	-	Failed to feed the AMS C Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0702720000020001	-	Failed to pull out the AMS C Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0702720000020002	-	Failed to feed the AMS C Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0702720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0702720000020004	-	Failed to pull back the AMS C Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0702720000020005	-	Failed to feed the AMS C Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0702730000020001	-	Failed to pull out the AMS C Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0702730000020002	-	Failed to feed the AMS C Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0702730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0702730000020004	-	Failed to pull back the AMS C Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0702730000020005	-	Failed to feed the AMS C Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0702800000010001	-	AMS C The current sensor of heater 1 is abnormal.
@@ -2453,13 +2472,13 @@ H	0703600000020001	-	The AMS D Slot 1 is overloaded. The filament may be tangled
 H	0703610000020001	-	The AMS D Slot 2 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0703620000020001	-	The AMS D Slot 3 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0703630000020001	-	The AMS D Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
-H	0703700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS D Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0703700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
+H	0703700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS D Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0703700000020002	P2S,H2S,H2D	Failed to feed the AMS D Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	0703700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
 H	0703700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
-H	0703700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS D Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0703700000020004	-	Failed to pull back the filament from the toolhead to AMS. Possible cause: filament or spool stuck.
+H	0703700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS D Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0703700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS D Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0703700000020005	-	Failed to feed the filament outside the AMS. Please clip the end of the filament flat and check to see if the spool is stuck.
 H	0703700000020006	-	Timeout purging old filament. Possible cause: filament stuck or the extruder/nozzle clog.
@@ -2467,14 +2486,17 @@ H	0703700000020007	-	AMS filament ran out. Please put a new filament into the sa
 H	0703700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	0703710000020001	-	Failed to pull out the AMS D Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0703710000020002	-	Failed to feed the AMS D Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0703710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0703710000020004	-	Failed to pull back the AMS D Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0703710000020005	-	Failed to feed the AMS D Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0703720000020001	-	Failed to pull out the AMS D Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0703720000020002	-	Failed to feed the AMS D Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0703720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0703720000020004	-	Failed to pull back the AMS D Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0703720000020005	-	Failed to feed the AMS D Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0703730000020001	-	Failed to pull out the AMS D Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0703730000020002	-	Failed to feed the AMS D Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0703730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0703730000020004	-	Failed to pull back the AMS D Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0703730000020005	-	Failed to feed the AMS D Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0703800000010001	-	AMS D The current sensor of heater 1 is abnormal.
@@ -2700,8 +2722,8 @@ H	0704600000020001	-	The AMS E Slot 1 is overloaded. The filament may be tangled
 H	0704610000020001	-	The AMS E Slot 2 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0704620000020001	-	The AMS E Slot 3 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0704630000020001	-	The AMS E Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
-H	0704700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	0704700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS E Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
+H	0704700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	0704700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
 H	0704700000020002	P2S,H2S,H2D	Failed to feed the AMS E Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	0704700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
@@ -2714,14 +2736,17 @@ H	0704700000020007	-	AMS filament ran out. Please put a new filament into the sa
 H	0704700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	0704710000020001	-	Failed to pull out the AMS E Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0704710000020002	-	Failed to feed the AMS E Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0704710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0704710000020004	-	Failed to pull back the AMS E Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0704710000020005	-	Failed to feed the AMS E Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0704720000020001	-	Failed to pull out the AMS E Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0704720000020002	-	Failed to feed the AMS E Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0704720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0704720000020004	-	Failed to pull back the AMS E Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0704720000020005	-	Failed to feed the AMS E Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0704730000020001	-	Failed to pull out the AMS E Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0704730000020002	-	Failed to feed the AMS E Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0704730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0704730000020004	-	Failed to pull back the AMS E Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0704730000020005	-	Failed to feed the AMS E Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0704800000010001	-	AMS E The current sensor of heater 1 is abnormal.
@@ -2947,28 +2972,31 @@ H	0705600000020001	-	The AMS F Slot 1 is overloaded. The filament may be tangled
 H	0705610000020001	-	The AMS F Slot 2 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0705620000020001	-	The AMS F Slot 3 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0705630000020001	-	The AMS F Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
-H	0705700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	0705700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS F Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
-H	0705700000020002	P2S,H2S,H2D	Failed to feed the AMS F Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0705700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	0705700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
+H	0705700000020002	P2S,H2S,H2D	Failed to feed the AMS F Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	0705700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0705700000020004	-	Failed to pull back the filament from the toolhead to AMS. Possible cause: filament or spool stuck.
 H	0705700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS F Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
-H	0705700000020005	-	Failed to feed the filament outside the AMS. Please clip the end of the filament flat and check to see if the spool is stuck.
 H	0705700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS F Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
+H	0705700000020005	-	Failed to feed the filament outside the AMS. Please clip the end of the filament flat and check to see if the spool is stuck.
 H	0705700000020006	-	Timeout purging old filament. Possible cause: filament stuck or the extruder/nozzle clog.
 H	0705700000020007	-	AMS filament ran out. Please put a new filament into the same slot in AMS and resume.
 H	0705700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	0705710000020001	-	Failed to pull out the AMS F Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0705710000020002	-	Failed to feed the AMS F Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0705710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0705710000020004	-	Failed to pull back the AMS F Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0705710000020005	-	Failed to feed the AMS F Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0705720000020001	-	Failed to pull out the AMS F Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0705720000020002	-	Failed to feed the AMS F Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0705720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0705720000020004	-	Failed to pull back the AMS F Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0705720000020005	-	Failed to feed the AMS F Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0705730000020001	-	Failed to pull out the AMS F Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0705730000020002	-	Failed to feed the AMS F Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0705730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0705730000020004	-	Failed to pull back the AMS F Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0705730000020005	-	Failed to feed the AMS F Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0705800000010001	-	AMS F The current sensor of heater 1 is abnormal.
@@ -3208,14 +3236,17 @@ H	0706700000020007	-	AMS filament ran out. Please put a new filament into the sa
 H	0706700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	0706710000020001	-	Failed to pull out the AMS G Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0706710000020002	-	Failed to feed the AMS G Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0706710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0706710000020004	-	Failed to pull back the AMS G Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0706710000020005	-	Failed to feed the AMS G Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0706720000020001	-	Failed to pull out the AMS G Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0706720000020002	-	Failed to feed the AMS G Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0706720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0706720000020004	-	Failed to pull back the AMS G Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0706720000020005	-	Failed to feed the AMS G Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0706730000020001	-	Failed to pull out the AMS G Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0706730000020002	-	Failed to feed the AMS G Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0706730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0706730000020004	-	Failed to pull back the AMS G Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0706730000020005	-	Failed to feed the AMS G Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0706800000010001	-	AMS G The current sensor of heater 1 is abnormal.
@@ -3443,11 +3474,11 @@ H	0707620000020001	-	The AMS H Slot 3 is overloaded. The filament may be tangled
 H	0707630000020001	-	The AMS H Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	0707700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	0707700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS H Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
-H	0707700000020002	P2S,H2S,H2D	Failed to feed the AMS H Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	0707700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
+H	0707700000020002	P2S,H2S,H2D	Failed to feed the AMS H Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	0707700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
-H	0707700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS H Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0707700000020004	-	Failed to pull back the filament from the toolhead to AMS. Possible cause: filament or spool stuck.
+H	0707700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS H Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0707700000020005	-	Failed to feed the filament outside the AMS. Please clip the end of the filament flat and check to see if the spool is stuck.
 H	0707700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS H Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0707700000020006	-	Timeout purging old filament. Possible cause: filament stuck or the extruder/nozzle clog.
@@ -3455,14 +3486,17 @@ H	0707700000020007	-	AMS filament ran out. Please put a new filament into the sa
 H	0707700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	0707710000020001	-	Failed to pull out the AMS H Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0707710000020002	-	Failed to feed the AMS H Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0707710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0707710000020004	-	Failed to pull back the AMS H Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0707710000020005	-	Failed to feed the AMS H Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0707720000020001	-	Failed to pull out the AMS H Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0707720000020002	-	Failed to feed the AMS H Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0707720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0707720000020004	-	Failed to pull back the AMS H Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0707720000020005	-	Failed to feed the AMS H Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0707730000020001	-	Failed to pull out the AMS H Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	0707730000020002	-	Failed to feed the AMS H Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	0707730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	0707730000020004	-	Failed to pull back the AMS H Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	0707730000020005	-	Failed to feed the AMS H Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	0707800000010001	-	AMS H The current sensor of heater 1 is abnormal.
@@ -3525,16 +3559,16 @@ H	07FF200000020001	-	External filament has run out; please load a new filament.
 H	07FF200000020001	H2D	External filament of right extruder has run out; please load a new filament.
 H	07FF200000020002	-	External filament is missing; please load a new filament.
 H	07FF200000020002	H2D	No filament was detected in the right extruder from the external spool; please load the new filament.
-H	07FF200000020004	-	Please pull the external filament from the extruder.
 H	07FF200000020004	H2D	Please pull the external filament from the right extruder.
-H	07FF450000020001	H2D	The right filament cutter sensor is malfunctioning; please check whether the connector is properly plugged in.
+H	07FF200000020004	-	Please pull the external filament from the extruder.
 H	07FF450000020001	-	The filament cutter sensor is malfunctioning; please check whether the connector is properly plugged in.
+H	07FF450000020001	H2D	The right filament cutter sensor is malfunctioning; please check whether the connector is properly plugged in.
 H	07FF450000020002	-	The filament cutter's cutting distance is too large. Possible causes include the filament cutter stopper skipping teeth, motor losing steps, or the XY axis not being homed.
 H	07FF450000020003	-	The filament cutter handle has not been released. The handle or blade may be jammed, or there could be an issue with the filament sensor connection.
-H	07FF600000020001	-	External spool may be tangled or jammed.
 H	07FF600000020001	H2D	External spool connected to right extruder may be tangled or jammed.
-H	07FF700000020003	-	Please check if the filament is coming out of the nozzle. If not, gently push the material and try to extrude again.
+H	07FF600000020001	-	External spool may be tangled or jammed.
 H	07FF700000020003	H2D	Please check if the material is coming out of the right nozzle. If not, gently push the material and try to extrude again.
+H	07FF700000020003	-	Please check if the filament is coming out of the nozzle. If not, gently push the material and try to extrude again.
 H	07FF700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	07FF800000010001	-	The toolhead lift motor works abnormally. Please check whether the connecting cable is loose.
 H	07FF800000010002	-	The Toolhead Lifting Motor position hall sensor has an open circuit; please check whether the connecting cable is loose.
@@ -3549,16 +3583,16 @@ H	07FF810000010002	-	The position hall sensor of the Extruder Switching Motor ha
 H	07FF810000010003	-	The hall signal of the Extruder Switching Motor is abnormal, possibly due to internal communication failure in the Toolhead module.
 H	07FF810000010004	-	The position hall sensor of the Extruder Switching Motor has a short circuit; please check if the Hall sensor is malfunctioning.
 H	07FF810000020001	-	The extruder switching action is abnormal. Please check whether there is something stuck in the toolhead.
-H	07FFA00000020001	-	The nozzle cold pull process has timed out. Please click 'Retry' and then manually pull out the filament.
 H	07FFA00000020001	H2D	The right nozzle cold pull process has timed out. Please click 'Retry' and then manually pull out the filament.
+H	07FFA00000020001	-	The nozzle cold pull process has timed out. Please click 'Retry' and then manually pull out the filament.
 H	0C00010000010001	-	Micro Lidar is offline. Please check the hardware connection.
 H	0C00010000010001	H2S,H2D	Toolhead Camera is offline. Please check the hardware connection.
 H	0C00010000010003	-	Synchronization between the Micro Lidar and MC is abnormal. Please restart your printer.
 H	0C00010000010003	H2S,H2D	Synchronization between the Toolhead Camera and MC is abnormal. Please restart your printer.
 H	0C00010000010004	-	Micro Lidar lens seems to be dirty. Please clean the lens.
 H	0C00010000010004	H2S,H2D	Toolhead Camera lens seems to be dirty. Please clean the lens.
-H	0C00010000010005	-	Micro Lidar parameter is abnormal. Please contact customer support.
 H	0C00010000010005	H2S,H2D	Toolhead Camera parameter is abnormal. Please contact customer support.
+H	0C00010000010005	-	Micro Lidar parameter is abnormal. Please contact customer support.
 H	0C0001000001000A	-	The Micro Lidar LED may be broken.
 H	0C0001000001000B	-	Failed to calibrate Micro Lidar. Please make sure the calibration chart is clean and not obscured. Then, run machine calibration again.
 H	0C0001000001000F	-	The Live View Camera calibration failed. Please restart the devices or update the firmware.
@@ -3601,13 +3635,13 @@ H	0C0003000002000E	-	Your nozzle seems to be covered with jammed or clogged mate
 H	0C0003000002000F	-	Parts skipped before first layer inspection; the inspection is not supported for the current print.
 H	0C00030000020010	-	Foreign objects detected on heatbed; Please check and clean the heatbed.
 H	0C00030000020011	-	The high-precision nozzle offset calibration failed; please recalibrate.
-H	0C00030000020012	P2S	Foreign object detection is not working. The Live View Camera needs calibration. Please tap 'Settings > Calibration' on the printer screen.
 H	0C00030000020012	-	Foreign object detection is not working. The Live View Camera needs calibration. Please tap 'Settings > Calibration' on the printer screen. If a laser or cutting module is installed, please remove it before calibration.
+H	0C00030000020012	P2S	Foreign object detection is not working. The Live View Camera needs calibration. Please tap 'Settings > Calibration' on the printer screen.
 H	0C00030000020013	-	Foreign object detection is not working. Please restart the devices or update the firmware.
 H	0C00030000020014	P2S	Foreign object detection accuracy has decreased. If this occurs frequently, perform a Live View Camera calibration (â€œSettingsâ€ > â€œCalibrationâ€ on the printer screen).
 H	0C00030000020014	-	Foreign object detection accuracy has decreased. If this occurs frequently, perform a Live View Camera calibration (â€œSettingsâ€ > â€œCalibrationâ€ on the printer screen). If a laser or cutting module is installed, remove it before proceeding.
-H	0C00030000020015	-	Foreign object detection is not working. Detected the Live View Camera has been replaced. If a laser or cutting module is installed, please uninstall the module, tap 'Settings>Calibration' on printer screen and re-calibrate the Live View Camera.
 H	0C00030000020015	P2S	Foreign object detection is not working. Detected the Live View Camera has been replaced. Please tap 'Settings>Calibration' on printer screen and re-calibrate the Live View Camera.
+H	0C00030000020015	-	Foreign object detection is not working. Detected the Live View Camera has been replaced. If a laser or cutting module is installed, please uninstall the module, tap 'Settings>Calibration' on printer screen and re-calibrate the Live View Camera.
 H	0C00030000020016	-	Foreign object detection is not working and the Live View camera serial number cannot be read. Please contact the customer support team.
 H	0C00030000020017	-	Laser engraving Z-axis focus calibration failed. Please check if the Laser Test Material (350g paperboard) is properly placed and its surface is clean and intact.
 H	0C00030000020018	-	Insufficient system memory was detected, and the foreign object detection function was not working. Please restart the devices or update the firmware after the task is completed
@@ -4131,23 +4165,26 @@ H	1800700000020001	-	Failed to pull out the filament from the extruder. Possible
 H	1800700000020002	P2S,H2S,H2D	Failed to feed the AMS-HT A Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	1800700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
 H	1800700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
-H	1800700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS-HT A Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1800700000020004	-	Failed to pull back the filament from the toolhead to AMS-HT. Possible cause: filament or spool stuck.
-H	1800700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS-HT A Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
+H	1800700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS-HT A Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1800700000020005	-	Failed to feed the filament outside the AMS-HT. Please clip the end of the filament flat and check to see if the spool is stuck.
+H	1800700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS-HT A Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1800700000020006	-	Timeout purging old filament. Possible cause: filament stuck or the extruder/nozzle clog.
 H	1800700000020007	-	AMS-HT filament ran out. Please put a new filament into the same slot in AMS and resume.
 H	1800700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	1800710000020001	-	Failed to pull out the AMS-HT A Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1800710000020002	-	Failed to feed the AMS-HT A Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1800710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1800710000020004	-	Failed to pull back the AMS-HT A Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1800710000020005	-	Failed to feed the AMS-HT A Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1800720000020001	-	Failed to pull out the AMS-HT A Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1800720000020002	-	Failed to feed the AMS-HT A Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1800720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1800720000020004	-	Failed to pull back the AMS-HT A Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1800720000020005	-	Failed to feed the AMS-HT A Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1800730000020001	-	Failed to pull out the AMS-HT A Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1800730000020002	-	Failed to feed the AMS-HT A Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1800730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1800730000020004	-	Failed to pull back the AMS-HT A Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1800730000020005	-	Failed to feed the AMS-HT A Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1800800000010001	-	AMS-HT A The current sensor of heater 1 is abnormal.
@@ -4375,28 +4412,31 @@ H	1801600000020001	-	The AMS-HT B Slot 1 is overloaded. The filament may be tang
 H	1801610000020001	-	The AMS-HT B Slot 2 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	1801620000020001	-	The AMS-HT B Slot 3 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	1801630000020001	-	The AMS-HT B Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
-H	1801700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS-HT B Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1801700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
-H	1801700000020002	P2S,H2S,H2D	Failed to feed the AMS-HT B Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1801700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS-HT B Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1801700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
+H	1801700000020002	P2S,H2S,H2D	Failed to feed the AMS-HT B Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	1801700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
-H	1801700000020004	-	Failed to pull back the filament from the toolhead to AMS-HT. Possible cause: filament or spool stuck.
 H	1801700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS-HT B Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
-H	1801700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS-HT B Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
+H	1801700000020004	-	Failed to pull back the filament from the toolhead to AMS-HT. Possible cause: filament or spool stuck.
 H	1801700000020005	-	Failed to feed the filament outside the AMS-HT. Please clip the end of the filament flat and check to see if the spool is stuck.
+H	1801700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS-HT B Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1801700000020006	-	Timeout purging old filament. Possible cause: filament stuck or the extruder/nozzle clog.
 H	1801700000020007	-	AMS-HT filament ran out. Please put a new filament into the same slot in AMS and resume.
 H	1801700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	1801710000020001	-	Failed to pull out the AMS-HT B Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1801710000020002	-	Failed to feed the AMS-HT B Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1801710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1801710000020004	-	Failed to pull back the AMS-HT B Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1801710000020005	-	Failed to feed the AMS-HT B Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1801720000020001	-	Failed to pull out the AMS-HT B Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1801720000020002	-	Failed to feed the AMS-HT B Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1801720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1801720000020004	-	Failed to pull back the AMS-HT B Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1801720000020005	-	Failed to feed the AMS-HT B Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1801730000020001	-	Failed to pull out the AMS-HT B Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1801730000020002	-	Failed to feed the AMS-HT B Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1801730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1801730000020004	-	Failed to pull back the AMS-HT B Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1801730000020005	-	Failed to feed the AMS-HT B Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1801800000010001	-	AMS-HT B The current sensor of heater 1 is abnormal.
@@ -4631,21 +4671,24 @@ H	1802700000020002	-	Failed to feed the filament into the toolhead. Possible cau
 H	1802700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1802700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS-HT C Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1802700000020004	-	Failed to pull back the filament from the toolhead to AMS-HT. Possible cause: filament or spool stuck.
-H	1802700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS-HT C Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1802700000020005	-	Failed to feed the filament outside the AMS-HT. Please clip the end of the filament flat and check to see if the spool is stuck.
+H	1802700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS-HT C Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1802700000020006	-	Timeout purging old filament. Possible cause: filament stuck or the extruder/nozzle clog.
 H	1802700000020007	-	AMS-HT filament ran out. Please put a new filament into the same slot in AMS and resume.
 H	1802700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	1802710000020001	-	Failed to pull out the AMS-HT C Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1802710000020002	-	Failed to feed the AMS-HT C Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1802710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1802710000020004	-	Failed to pull back the AMS-HT C Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1802710000020005	-	Failed to feed the AMS-HT C Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1802720000020001	-	Failed to pull out the AMS-HT C Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1802720000020002	-	Failed to feed the AMS-HT C Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1802720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1802720000020004	-	Failed to pull back the AMS-HT C Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1802720000020005	-	Failed to feed the AMS-HT C Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1802730000020001	-	Failed to pull out the AMS-HT C Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1802730000020002	-	Failed to feed the AMS-HT C Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1802730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1802730000020004	-	Failed to pull back the AMS-HT C Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1802730000020005	-	Failed to feed the AMS-HT C Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1802800000010001	-	AMS-HT C The current sensor of heater 1 is abnormal.
@@ -4873,8 +4916,8 @@ H	1803600000020001	-	The AMS-HT D Slot 1 is overloaded. The filament may be tang
 H	1803610000020001	-	The AMS-HT D Slot 2 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	1803620000020001	-	The AMS-HT D Slot 3 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	1803630000020001	-	The AMS-HT D Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
-H	1803700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	1803700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS-HT D Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
+H	1803700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	1803700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
 H	1803700000020002	P2S,H2S,H2D	Failed to feed the AMS-HT D Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	1803700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
@@ -4887,14 +4930,17 @@ H	1803700000020007	-	AMS-HT filament ran out. Please put a new filament into the
 H	1803700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	1803710000020001	-	Failed to pull out the AMS-HT D Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1803710000020002	-	Failed to feed the AMS-HT D Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1803710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1803710000020004	-	Failed to pull back the AMS-HT D Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1803710000020005	-	Failed to feed the AMS-HT D Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1803720000020001	-	Failed to pull out the AMS-HT D Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1803720000020002	-	Failed to feed the AMS-HT D Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1803720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1803720000020004	-	Failed to pull back the AMS-HT D Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1803720000020005	-	Failed to feed the AMS-HT D Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1803730000020001	-	Failed to pull out the AMS-HT D Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1803730000020002	-	Failed to feed the AMS-HT D Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1803730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1803730000020004	-	Failed to pull back the AMS-HT D Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1803730000020005	-	Failed to feed the AMS-HT D Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1803800000010001	-	AMS-HT D The current sensor of heater 1 is abnormal.
@@ -5136,14 +5182,17 @@ H	1804700000020007	-	AMS-HT filament ran out. Please put a new filament into the
 H	1804700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	1804710000020001	-	Failed to pull out the AMS-HT E Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1804710000020002	-	Failed to feed the AMS-HT E Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1804710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1804710000020004	-	Failed to pull back the AMS-HT E Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1804710000020005	-	Failed to feed the AMS-HT E Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1804720000020001	-	Failed to pull out the AMS-HT E Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1804720000020002	-	Failed to feed the AMS-HT E Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1804720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1804720000020004	-	Failed to pull back the AMS-HT E Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1804720000020005	-	Failed to feed the AMS-HT E Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1804730000020001	-	Failed to pull out the AMS-HT E Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1804730000020002	-	Failed to feed the AMS-HT E Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1804730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1804730000020004	-	Failed to pull back the AMS-HT E Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1804730000020005	-	Failed to feed the AMS-HT E Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1804800000010001	-	AMS-HT E The current sensor of heater 1 is abnormal.
@@ -5373,8 +5422,8 @@ H	1805620000020001	-	The AMS-HT F Slot 3 is overloaded. The filament may be tang
 H	1805630000020001	-	The AMS-HT F Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	1805700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
 H	1805700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS-HT F Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
-H	1805700000020002	P2S,H2S,H2D	Failed to feed the AMS-HT F Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	1805700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
+H	1805700000020002	P2S,H2S,H2D	Failed to feed the AMS-HT F Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	1805700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1805700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS-HT F Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1805700000020004	-	Failed to pull back the filament from the toolhead to AMS-HT. Possible cause: filament or spool stuck.
@@ -5385,14 +5434,17 @@ H	1805700000020007	-	AMS-HT filament ran out. Please put a new filament into the
 H	1805700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	1805710000020001	-	Failed to pull out the AMS-HT F Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1805710000020002	-	Failed to feed the AMS-HT F Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1805710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1805710000020004	-	Failed to pull back the AMS-HT F Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1805710000020005	-	Failed to feed the AMS-HT F Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1805720000020001	-	Failed to pull out the AMS-HT F Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1805720000020002	-	Failed to feed the AMS-HT F Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1805720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1805720000020004	-	Failed to pull back the AMS-HT F Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1805720000020005	-	Failed to feed the AMS-HT F Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1805730000020001	-	Failed to pull out the AMS-HT F Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1805730000020002	-	Failed to feed the AMS-HT F Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1805730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1805730000020004	-	Failed to pull back the AMS-HT F Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1805730000020005	-	Failed to feed the AMS-HT F Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1805800000010001	-	AMS-HT F The current sensor of heater 1 is abnormal.
@@ -5622,26 +5674,29 @@ H	1806620000020001	-	The AMS-HT G Slot 3 is overloaded. The filament may be tang
 H	1806630000020001	-	The AMS-HT G Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	1806700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS-HT G Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1806700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
-H	1806700000020002	P2S,H2S,H2D	Failed to feed the AMS-HT G Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	1806700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
+H	1806700000020002	P2S,H2S,H2D	Failed to feed the AMS-HT G Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	1806700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1806700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS-HT G Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1806700000020004	-	Failed to pull back the filament from the toolhead to AMS-HT. Possible cause: filament or spool stuck.
-H	1806700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS-HT G Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1806700000020005	-	Failed to feed the filament outside the AMS-HT. Please clip the end of the filament flat and check to see if the spool is stuck.
+H	1806700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS-HT G Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1806700000020006	-	Timeout purging old filament. Possible cause: filament stuck or the extruder/nozzle clog.
 H	1806700000020007	-	AMS-HT filament ran out. Please put a new filament into the same slot in AMS and resume.
 H	1806700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	1806710000020001	-	Failed to pull out the AMS-HT G Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1806710000020002	-	Failed to feed the AMS-HT G Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1806710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1806710000020004	-	Failed to pull back the AMS-HT G Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1806710000020005	-	Failed to feed the AMS-HT G Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1806720000020001	-	Failed to pull out the AMS-HT G Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1806720000020002	-	Failed to feed the AMS-HT G Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1806720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1806720000020004	-	Failed to pull back the AMS-HT G Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1806720000020005	-	Failed to feed the AMS-HT G Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1806730000020001	-	Failed to pull out the AMS-HT G Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1806730000020002	-	Failed to feed the AMS-HT G Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1806730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1806730000020004	-	Failed to pull back the AMS-HT G Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1806730000020005	-	Failed to feed the AMS-HT G Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1806800000010001	-	AMS-HT G The current sensor of heater 1 is abnormal.
@@ -5869,13 +5924,13 @@ H	1807600000020001	-	The AMS-HT H Slot 1 is overloaded. The filament may be tang
 H	1807610000020001	-	The AMS-HT H Slot 2 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	1807620000020001	-	The AMS-HT H Slot 3 is overloaded. The filament may be tangled or the filament buffer may be stuck.
 H	1807630000020001	-	The AMS-HT H Slot 4 is overloaded. The filament may be tangled or the filament buffer may be stuck.
-H	1807700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS-HT H Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1807700000020001	-	Failed to pull out the filament from the extruder. Possible causes: clogged extruder or broken filament.
-H	1807700000020002	P2S,H2S,H2D	Failed to feed the AMS-HT H Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1807700000020001	A1,A1MINI,P2S,H2S,H2D	Failed to pull out the AMS-HT H Slot 1 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1807700000020002	-	Failed to feed the filament into the toolhead. Possible cause: filament or spool stuck.
+H	1807700000020002	P2S,H2S,H2D	Failed to feed the AMS-HT H Slot 1 filament into the Toolhead. Possible cause: filament or spool stuck.
 H	1807700000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
-H	1807700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS-HT H Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1807700000020004	-	Failed to pull back the filament from the toolhead to AMS-HT. Possible cause: filament or spool stuck.
+H	1807700000020004	A1,A1MINI,P2S,H2S,H2D	Failed to pull back the AMS-HT H Slot 1 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1807700000020005	-	Failed to feed the filament outside the AMS-HT. Please clip the end of the filament flat and check to see if the spool is stuck.
 H	1807700000020005	A1,A1MINI,P2S,H2S,H2D	Failed to feed the AMS-HT H Slot 1 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1807700000020006	-	Timeout purging old filament. Possible cause: filament stuck or the extruder/nozzle clog.
@@ -5883,14 +5938,17 @@ H	1807700000020007	-	AMS-HT filament ran out. Please put a new filament into the
 H	1807700000020008	-	Failed to get AMS mapping table; please select 'Resume' to retry.
 H	1807710000020001	-	Failed to pull out the AMS-HT H Slot 2 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1807710000020002	-	Failed to feed the AMS-HT H Slot 2 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1807710000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1807710000020004	-	Failed to pull back the AMS-HT H Slot 2 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1807710000020005	-	Failed to feed the AMS-HT H Slot 2 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1807720000020001	-	Failed to pull out the AMS-HT H Slot 3 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1807720000020002	-	Failed to feed the AMS-HT H Slot 3 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1807720000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1807720000020004	-	Failed to pull back the AMS-HT H Slot 3 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1807720000020005	-	Failed to feed the AMS-HT H Slot 3 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1807730000020001	-	Failed to pull out the AMS-HT H Slot 4 filament from the extruder. Possible cause: clogged extruder or broken filament inside the extruder.
 H	1807730000020002	-	Failed to feed the AMS-HT H Slot 4 filament into the Toolhead. Possible cause: filament or spool stuck.
+H	1807730000020003	-	Failed to extrude the filament. Possible cause: extruder or nozzle clog.
 H	1807730000020004	-	Failed to pull back the AMS-HT H Slot 4 filament from the Toolhead. Possible cause: filament or spool stuck.
 H	1807730000020005	-	Failed to feed the AMS-HT H Slot 4 filament. Please trim the end of the filament and check if the spool is stuck.
 H	1807800000010001	-	AMS-HT H The current sensor of heater 1 is abnormal.
@@ -5955,12 +6013,12 @@ H	18FE810000010002	-	The position hall sensor of the Extruder Switching Motor ha
 H	18FE810000010003	-	The hall signal of the Extruder Switching Motor is abnormal, possibly due to internal communication failure in the Toolhead module.
 H	18FE810000010004	-	The position hall sensor of the Extruder Switching Motor has a short circuit; please check if the Hall sensor is malfunctioning.
 H	18FE810000020001	-	The extruder switching action is abnormal. Please check whether there is something stuck in the toolhead.
-H	18FF200000020001	H2D	External filament of right extruder has run out; please load a new filament.
 H	18FF200000020001	-	External filament has run out; please load a new filament.
-H	18FF200000020002	H2D	No filament was detected in the right extruder from the external spool; please load the new filament.
+H	18FF200000020001	H2D	External filament of right extruder has run out; please load a new filament.
 H	18FF200000020002	-	External filament is missing; please load a new filament.
-H	18FF200000020004	-	Please pull the external filament from the extruder.
+H	18FF200000020002	H2D	No filament was detected in the right extruder from the external spool; please load the new filament.
 H	18FF200000020004	H2D	Please pull the external filament from the right extruder.
+H	18FF200000020004	-	Please pull the external filament from the extruder.
 H	18FF450000020002	-	The filament cutter's cutting distance is too large. Possible causes include the filament cutter stopper skipping teeth, motor losing steps, or the XY axis not being homed.
 H	18FF450000020003	-	The filament cutter handle has not been released. The handle or blade may be jammed, or there could be an issue with the filament sensor connection.
 H	18FF600000020001	H2D	External spool connected to right extruder may be tangled or jammed.

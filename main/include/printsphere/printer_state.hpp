@@ -55,6 +55,8 @@ enum class PrinterModel : uint8_t {
   kX1,
   kX1C,
   kX1E,
+  kX2D,
+  kA2L,
 };
 
 enum class FieldSource : uint8_t {

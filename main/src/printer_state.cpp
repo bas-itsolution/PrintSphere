@@ -109,6 +109,10 @@ const char* to_string(PrinterModel model) {
       return "X1C";
     case PrinterModel::kX1E:
       return "X1E";
+    case PrinterModel::kX2D:
+      return "X2D";
+    case PrinterModel::kA2L:
+      return "A2L";
     case PrinterModel::kUnknown:
     default:
       return "UNKNOWN";
@@ -172,6 +176,8 @@ constexpr ModelCapabilityFlags kModelCapabilities[] = {
     /* kX1      */ {false, true,  true,  false, true,  false, true,  false, true },
     /* kX1C     */ {false, true,  true,  false, true,  false, true,  false, true },
     /* kX1E     */ {false, true,  true,  false, true,  false, true,  false, true },
+    /* kX2D     */ {false, true,  true,  true,  true,  true,  true,  true,  true },
+    /* kA2L     */ {true,  false, false, false, false, false, true,  false, false},
 };
 
 constexpr size_t kModelCapabilityCount =
@@ -179,7 +185,7 @@ constexpr size_t kModelCapabilityCount =
 
 // Compile-time guard: the table must have one row per enum value.
 // Update this constant if the PrinterModel enum gains/loses members.
-static_assert(kModelCapabilityCount == 13,
+static_assert(kModelCapabilityCount == 15,
               "kModelCapabilities row count must match PrinterModel enum size");
 
 constexpr const ModelCapabilityFlags& caps_for(PrinterModel model) {

@@ -10,6 +10,9 @@ Patch release on top of v1.6 focused on display stability during prints, power-s
 
 ## Major Features
 
+- **Bambu Lab X2D support**: The new X2-series flagship is now recognized (product name "Bambu Lab X2D", local and cloud detection) with the correct capability profile: RTSP camera, chamber temperature, dual nozzle (L/R display), primary + secondary chamber light, local status via Developer Mode, cloud preferred. The V2 status protocol (`extruder.info[].snow`, `vir_slot`, `nozzle.info[]`) and the embedded X2-family TLS CA were already in place, so full functionality comes with the model entry alone.
+- **Bambu Lab A2L support**: The A2-series entry model is recognized and mapped to the A1-style capability profile (JPEG chamber camera, local status without Developer Mode).
+- **HMS/error text database refreshed**: Synced against the current Bambu API (version 202607031835): 51 new HMS codes and 7 new print error codes, including the new extruder-clog variants and G-code verification errors introduced with the latest printer generation.
 - **Hardware variant builds**: The firmware now builds per hardware variant via `-DPRINTSPHERE_HW_VARIANT=...` (e.g. `amoled_1_75`, `lcd_2_8c`) with separate build directories.
 - **ESP32-S3 Touch LCD 2.8C port (experimental)**: Initial support for the Waveshare ESP32-S3 Touch LCD 2.8C (RGB panel, double full-frame buffering).
 
@@ -28,11 +31,14 @@ Patch release on top of v1.6 focused on display stability during prints, power-s
 - Stale-stage invalidation, periodic `pushall` (`kPeriodicPushallMs = 60000`), and hybrid handoff ordering added in `printer_client.cpp` / `application.cpp`.
 - Pager swipe logic (`ui.cpp`) reworked: animated snap via `lv_obj_scroll_to_x(LV_ANIM_ON)`, press guard, gesture-origin tracking with advance threshold.
 - AMOLED BSP draw-buffer defines documented: under TE_SYNC the adapter always allocates a full-frame draw buffer; `LVGL_BUFFER_HEIGHT_PSRAM` only sizes `max_transfer_sz` and the fallback path.
+- `PrinterModel` gained `kX2D` and `kA2L` (appended, capability table + `static_assert` updated); product-name detection extended in `bambu_status.cpp`.
+- HMS tooling hardened: `tools/hms_merge.ps1` and `tools/check_sorted.ps1` now split the TSV sections dynamically instead of relying on hard-coded line ranges, and the refresh workflow guards against a PowerShell 5.1 UTF-8 decoding pitfall that could have corrupted non-ASCII characters (e.g. `°C`).
 
 ## Known Notes
 
 - Between periodic `pushall` responses the raw stage field can alternate between `printing` and an empty placeholder in partial reports. This is cosmetic: lifecycle and displayed status remain `printing`.
 - `esp_lvgl_adapter` v0.6.2 is available upstream but is intentionally not adopted in this release: its changes do not affect PrintSphere's code paths, and updating would drop the local worker-scheduling patch.
+- X2D and A2L support is based on the published protocol behavior of these models (identical V2 payload structures as H2/P2S and A1 respectively); it has not yet been verified against physical devices. The X2D Developer-Mode requirement for local status mirrors the H2 series policy and is a one-line capability-table change if it turns out to differ.
 
 ## Tested Focus
 

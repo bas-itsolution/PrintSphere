@@ -20,6 +20,9 @@ PrinterModel bambu_model_from_product_name(const std::string& product_name) {
   if (normalized.find("A1MINI") != std::string::npos) {
     return PrinterModel::kA1Mini;
   }
+  if (normalized.find("A2L") != std::string::npos) {
+    return PrinterModel::kA2L;
+  }
   if (normalized.find("BAMBULABA1") != std::string::npos || normalized == "A1") {
     return PrinterModel::kA1;
   }
@@ -43,6 +46,9 @@ PrinterModel bambu_model_from_product_name(const std::string& product_name) {
   }
   if (normalized.find("H2C") != std::string::npos) {
     return PrinterModel::kH2C;
+  }
+  if (normalized.find("X2D") != std::string::npos) {
+    return PrinterModel::kX2D;
   }
   if (normalized.find("X1E") != std::string::npos) {
     return PrinterModel::kX1E;
