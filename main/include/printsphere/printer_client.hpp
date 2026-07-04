@@ -181,6 +181,7 @@ class PrinterClient {
   std::atomic<uint32_t> initial_sync_tick_{0};
   std::atomic<uint32_t> connection_state_tick_{0};
   std::atomic<uint32_t> watchdog_probe_tick_{0};
+  std::atomic<uint32_t> periodic_pushall_tick_{0};
   std::atomic<uint32_t> rebuild_request_tick_{0};
   std::atomic<uint32_t> rebuild_delay_ticks_{0};
   std::atomic<bool> runtime_dirty_{false};

@@ -11,8 +11,9 @@ tools/*
 !tools/patches/
 !tools/patches/*.ps1
 !tools/package_initial_flash.py
+!tools/package_release.ps1
 release/*
-!release/RELEASE_NOTES_v1.6.md
+!release/RELEASE_NOTES_v1.6.1.md
 !release/archive/
 release/archive/*
 !release/archive/firmware-v*.bin

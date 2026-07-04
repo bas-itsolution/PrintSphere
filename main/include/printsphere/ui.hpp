@@ -40,7 +40,11 @@ class Ui {
   esp_err_t initialize();
   void set_arc_color_scheme(const ArcColorScheme& colors);
   void apply_snapshot(const PrinterSnapshot& snapshot);
-  void update_power_save(bool on_battery, bool keep_awake);
+  // keep_awake: hard wake-lock (provisioning / camera page / page transition) —
+  //             blocks both dimming and screen-off.
+  // print_active: selects the "during print" timeouts instead of the idle
+  //               timeouts; dimming/screen-off stay allowed per policy.
+  void update_power_save(bool on_battery, bool keep_awake, bool print_active);
   void set_battery_display_policy(const BatteryDisplayPolicy& policy);
   bool is_low_power_mode_active() const;
   ScreenPowerMode screen_power_mode() const { return screen_power_mode_; }
@@ -285,6 +289,9 @@ class Ui {
   lv_coord_t gesture_start_y_ = 0;
   int gesture_start_brightness_ = 80;
   int active_page_ = 0;
+  // Page the current swipe gesture started on; used for the page-advance
+  // threshold decision when the finger is released (handle_pager_event).
+  int scroll_origin_page_ = 0;
   std::atomic<int> active_page_snapshot_{0};
   std::atomic<bool> page_scrolling_snapshot_{false};
   int last_parallax_clamped_ = -1;

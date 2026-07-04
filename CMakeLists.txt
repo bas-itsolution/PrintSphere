@@ -4,7 +4,7 @@ set(IDF_TARGET "esp32s3")
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(PRINTSPHERE_RELEASE_VERSION "v1.6")
+set(PRINTSPHERE_RELEASE_VERSION "v1.6.1")
 set(PROJECT_VER "${PRINTSPHERE_RELEASE_VERSION}")
 set(PRINTSPHERE_HW_VARIANT "lcd_2_8c" CACHE STRING
     "PrintSphere hardware variant: lcd_2_8c or amoled_1_75")
@@ -47,10 +47,14 @@ if(ESP_LCD_DIR AND ESP_LCD_LIB)
 endif()
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
-set(RELEASE_INITIAL_FLASH_DIR "${PRINTSPHERE_RELEASE_ROOT}")
-set(RELEASE_INITIAL_FLASH_IMAGE "${RELEASE_INITIAL_FLASH_DIR}/firmware.bin")
+set(RELEASE_INITIAL_FLASH_DIR "${PRINTSPHERE_RELEASE_ROOT}/initial")
+set(RELEASE_INITIAL_FLASH_IMAGE "${RELEASE_INITIAL_FLASH_DIR}/printsphere_full.bin")
 set(RELEASE_INITIAL_FLASH_VERSIONED_IMAGE
-    "${RELEASE_INITIAL_FLASH_DIR}/firmware-${PRINTSPHERE_RELEASE_VERSION_SUFFIX}.bin")
+    "${RELEASE_INITIAL_FLASH_DIR}/archive/printsphere_full-${PRINTSPHERE_RELEASE_VERSION_SUFFIX}.bin")
+set(RELEASE_OTA_DIR "${PRINTSPHERE_RELEASE_ROOT}/ota")
+set(RELEASE_OTA_IMAGE "${RELEASE_OTA_DIR}/printsphere_ota.bin")
+set(RELEASE_OTA_VERSIONED_IMAGE
+    "${RELEASE_OTA_DIR}/archive/printsphere_ota-${PRINTSPHERE_RELEASE_VERSION_SUFFIX}.bin")
 set(RELEASE_INITIAL_FLASH_PACKAGER "${CMAKE_SOURCE_DIR}/tools/package_initial_flash.py")
 # Error lookup TSV is embedded directly into the app binary via EMBED_TXTFILES
 # in main/CMakeLists.txt — no SPIFFS partition needed.
@@ -58,19 +62,23 @@ set(RELEASE_INITIAL_FLASH_PACKAGER "${CMAKE_SOURCE_DIR}/tools/package_initial_fl
 add_custom_target(
     release_initial_flash
     COMMAND ${CMAKE_COMMAND} -E make_directory "${RELEASE_INITIAL_FLASH_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${RELEASE_OTA_DIR}"
     COMMAND ${Python3_EXECUTABLE} "${RELEASE_INITIAL_FLASH_PACKAGER}"
             --build-dir "${CMAKE_BINARY_DIR}"
-            --release-root "${RELEASE_INITIAL_FLASH_DIR}"
+            --release-root "${PRINTSPHERE_RELEASE_ROOT}"
             --output "${RELEASE_INITIAL_FLASH_IMAGE}"
+            --ota-output "${RELEASE_OTA_IMAGE}"
             --version "${PRINTSPHERE_RELEASE_VERSION_SUFFIX}"
     BYPRODUCTS
             "${RELEASE_INITIAL_FLASH_IMAGE}"
             "${RELEASE_INITIAL_FLASH_VERSIONED_IMAGE}"
+            "${RELEASE_OTA_IMAGE}"
+            "${RELEASE_OTA_VERSIONED_IMAGE}"
     DEPENDS
             app
             bootloader
             "${CMAKE_BINARY_DIR}/flasher_args.json"
             "${RELEASE_INITIAL_FLASH_PACKAGER}"
-    COMMENT "Packaging ${PRINTSPHERE_HW_VARIANT_LABEL} initial flash image at ${RELEASE_INITIAL_FLASH_IMAGE}"
+    COMMENT "Packaging ${PRINTSPHERE_HW_VARIANT_LABEL} release images"
     VERBATIM
 )

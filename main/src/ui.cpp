@@ -1267,10 +1267,20 @@ esp_err_t Ui::initialize() {
         };
       }(),
       .rotation = ESP_LV_ADAPTER_ROTATE_0,
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_2_8C)
       // The 2.8C board is an RGB panel without a TE signal. Use double full
       // buffering so the RGB driver can switch complete framebuffers instead of
       // showing LVGL's in-progress updates on screen.
       .tear_avoid_mode = ESP_LV_ADAPTER_TEAR_AVOID_MODE_DOUBLE_FULL,
+#else
+      // AMOLED 1.75 (CO5300 QSPI) has a TE line: TE_SYNC + single PSRAM buffer
+      // is the validated combo (see April 2026 notes). DOUBLE_FULL is rejected
+      // by this panel path and would fall back to NONE + double buffer, which
+      // starved internal DRAM and broke mbedTLS handshakes. The adapter's TE
+      // wait is deadline-bounded, so a missed TE pulse can no longer deadlock
+      // the LVGL worker.
+      .tear_avoid_mode = ESP_LV_ADAPTER_TEAR_AVOID_MODE_TE_SYNC,
+#endif
       .touch_flags = {
           .swap_xy = 0,
           .mirror_x = 1,
@@ -1297,8 +1307,9 @@ esp_err_t Ui::initialize() {
 
   // With LV_SCROLL_SNAP_NONE the pager decelerates freely after finger release.
   // scroll_throw=90 shrinks velocity to ~10% per tick, reaching zero in ~3 ticks
-  // (~30 ms). SCROLL_END fires almost immediately and our single set_active_page()
-  // animation takes over cleanly — no competing LVGL snap animations.
+  // (~30 ms). SCROLL_END fires almost immediately and handle_pager_event()
+  // launches a single ease-out snap animation to the nearest page — no
+  // competing LVGL snap animations.
   {
     lv_indev_t* indev = lv_indev_get_next(nullptr);
     while (indev != nullptr) {
@@ -3523,6 +3534,13 @@ void Ui::handle_pager_event(lv_event_t* event) {
 
   if (code == LV_EVENT_SCROLL_BEGIN) {
     scrolling_ = true;
+    // Capture the gesture's origin page for the release-threshold decision
+    // below. Only finger-initiated scrolls count; the snap animation's own
+    // SCROLL_BEGIN (no pressed indev) must not overwrite it.
+    if (lv_indev_t* begin_indev = lv_indev_active();
+        begin_indev != nullptr && lv_indev_get_state(begin_indev) == LV_INDEV_STATE_PRESSED) {
+      scroll_origin_page_ = nearest_enabled_page_for_scroll();
+    }
     publish_page_state_snapshot();
 
     apply_page_visibility();
@@ -3534,8 +3552,43 @@ void Ui::handle_pager_event(lv_event_t* event) {
     scroll_x = -scroll_x;
   }
 
-  (void)scroll_x;
-  set_active_page(nearest_enabled_page_for_scroll());
+  // If the user grabbed the pager while a snap animation was in flight, LVGL
+  // deletes the animation and fires SCROLL_END mid-press. Don't fight the
+  // finger: their own gesture will deliver a fresh SCROLL_END on release.
+  if (lv_indev_t* active_indev = lv_indev_active();
+      active_indev != nullptr && lv_indev_get_state(active_indev) == LV_INDEV_STATE_PRESSED) {
+    return;
+  }
+
+  // Smartphone-style snap: instead of hard-jumping to the nearest page
+  // (LV_ANIM_OFF), glide there with LVGL's built-in ease-out scroll animation
+  // (200-400 ms depending on distance). While the animation runs we keep
+  // scrolling_ == true so both pages stay visible; the animation fires a final
+  // SCROLL_END when it lands, which re-enters this handler with a zero delta
+  // and finalizes the page switch via set_active_page().
+  //
+  // Page-advance threshold: the nearest-page rule alone would snap BACK unless
+  // more than half the screen was dragged. Smartphone pagers advance once the
+  // drag passes ~20% of the width, so if the nearest page is still the gesture's
+  // origin page but the drag went past the threshold, advance one page in the
+  // drag direction instead.
+  int snap_page = nearest_enabled_page_for_scroll();
+  if (lv_obj_t* origin_obj = page_object(scroll_origin_page_);
+      origin_obj != nullptr && snap_page == scroll_origin_page_) {
+    const int delta = scroll_x - lv_obj_get_x(origin_obj);
+    constexpr int kAdvanceThresholdPx = board::kDisplayWidth / 5;
+    if (std::abs(delta) >= kAdvanceThresholdPx) {
+      snap_page = next_enabled_page(scroll_origin_page_, delta > 0 ? 1 : -1);
+    }
+  }
+  if (lv_obj_t* snap_target = page_object(snap_page); snap_target != nullptr) {
+    const int target_x = lv_obj_get_x(snap_target);
+    if (std::abs(scroll_x - target_x) > 1) {
+      lv_obj_scroll_to_x(pager_, target_x, LV_ANIM_ON);
+      return;
+    }
+  }
+  set_active_page(snap_page);
 }
 
 void Ui::handle_screen_event(lv_event_t* event) {
@@ -3828,7 +3881,7 @@ void Ui::apply_brightness_policy() {
   bsp_display_brightness_set(target_brightness);
 }
 
-void Ui::update_power_save(bool on_battery, bool keep_awake) {
+void Ui::update_power_save(bool on_battery, bool keep_awake, bool print_active) {
   const uint32_t now = lv_tick_get();
   const uint32_t idle_ms = now - last_activity_tick_ms_.load();
 
@@ -3841,10 +3894,13 @@ void Ui::update_power_save(bool on_battery, bool keep_awake) {
     return;               // re-evaluate on next call with fresh idle_ms
   }
 
-  const uint32_t dim_timeout = (keep_awake
+  // print_active only selects the "during print" timeouts — it must NOT
+  // suppress dimming/screen-off (v1.6 regression: print_active was folded
+  // into keep_awake, which made the *_active_s policy timeouts dead code).
+  const uint32_t dim_timeout = (print_active
       ? battery_display_policy_.dim_timeout_active_s
       : battery_display_policy_.dim_timeout_idle_s) * 1000U;
-  const uint32_t off_timeout = (keep_awake
+  const uint32_t off_timeout = (print_active
       ? battery_display_policy_.off_timeout_active_s
       : battery_display_policy_.off_timeout_idle_s) * 1000U;
 

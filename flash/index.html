@@ -375,7 +375,7 @@
               </div>
               <div class="fact">
                 <span>Version</span>
-                <strong id="firmware-version">v1.6</strong>
+                <strong id="firmware-version">v1.6.1</strong>
               </div>
               <div class="fact">
                 <span>Flash offset</span>
@@ -407,7 +407,7 @@
               alt="PrintSphere circular display device"
             >
             <div class="caption">
-              <strong id="caption-version">Stable v1.6</strong>
+              <strong id="caption-version">Stable v1.6.1</strong>
               <span id="caption-path">release/initial/printsphere_full.bin</span>
             </div>
           </aside>
@@ -433,20 +433,20 @@
     <script>
       const firmwares = [
         {
-          label: "Stable v1.6 (1.75 AMOLED)",
+          label: "Stable v1.6.1 (1.75 AMOLED)",
           channel: "Stable",
-          version: "v1.6",
+          version: "v1.6.1",
           path: "../release/initial/printsphere_full.bin",
           displayPath: "release/initial/printsphere_full.bin",
-          note: "Factory flash erases device data before installing v1.6. Devices on v1.5.x or older need this once before OTA updates are used again.",
+          note: "Factory flash erases device data before installing v1.6.1. Devices already on v1.6 can update via OTA. Devices on v1.5.x or older still need the one-time full flash before OTA updates are used again.",
         },
         {
-          label: 'Stable v1.6 (2.8" LCD)',
+          label: 'Stable v1.6.1 (2.8" LCD)',
           channel: "Stable",
-          version: "v1.6-2.8C",
+          version: "v1.6.1-2.8C",
           path: "../release/2.8c/initial/printsphere_full.bin",
           displayPath: "release/2.8c/initial/printsphere_full.bin",
-          note: 'Factory flash image for the ESP32-S3-Touch-LCD-2.8C hardware variant. This installs the dedicated 2.8" board port and erases device data before flashing.',
+          note: 'Factory flash image for the ESP32-S3-Touch-LCD-2.8C hardware variant on v1.6.1. Devices already on v1.6-2.8c can move to the matching OTA image; older devices should stay on the factory flash path first.',
         },
       ];
 

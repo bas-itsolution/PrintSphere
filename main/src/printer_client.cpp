@@ -132,6 +132,11 @@ constexpr char kPushAll[] = "{\"pushing\":{\"sequence_id\":\"0\",\"command\":\"p
 constexpr char kStartPush[] = "{\"pushing\":{\"sequence_id\":\"0\",\"command\":\"start\"}}";
 constexpr uint32_t kDelayedPushallMs = 3000;
 constexpr uint32_t kInitialSyncTimeoutMs = 12000;
+// Periodic full-status re-sync while a job is live. Diff-based local reports
+// can silently drop fields (stg_cur, layer_num) on some firmwares, leaving
+// stale values latched. A pushall is one small MQTT publish (no TLS setup);
+// the response is a full status document that re-syncs everything.
+constexpr uint32_t kPeriodicPushallMs = 60000;
 // Watchdog timing: with keepalive=20s, a stalled LAN session is detected within
 // ~40s of silence. If the printer goes quiet despite a live TCP session we first
 // poke it with a start-push request (matches ha-bambulab's watchdog behaviour);
@@ -1725,6 +1730,8 @@ void PrinterClient::handle_report_payload(const char* payload, size_t length) {
     const std::string previous_raw_stage = text_string(runtime.raw_stage);
     const std::string previous_stage = text_string(runtime.stage);
     const std::string previous_detail = text_string(runtime.detail);
+    const uint16_t previous_layer = runtime.current_layer;
+    const float previous_progress_percent = runtime.progress_percent;
     const PrintLifecycleState previous_lifecycle = runtime.lifecycle;
     const int previous_print_error_code = runtime.print_error_code;
     const uint16_t previous_hms_alert_count = runtime.hms_alert_count;
@@ -2178,6 +2185,35 @@ void PrinterClient::handle_report_payload(const char* payload, size_t length) {
         }
         // else: hw_switch==1 && tray_now==tray_tar → post-load purge/wipe phase,
         // keep "changing_filament" for generic filament animation.
+      }
+    }
+
+    // Stale prep-stage invalidation: once the printer actually starts laying
+    // down layers, local MQTT diff payloads often stop carrying stg_cur, so a
+    // pre-print stage like cleaning_nozzle_tip stays latched indefinitely
+    // (the cloud path recovers because it receives full status pushes).
+    // When gcode_state is RUNNING and layer/progress demonstrably advance
+    // while the payload carries no explicit stage, drop the stale prep stage.
+    if (!has_stage_update && effective_gcode_state == "RUNNING") {
+      const std::string latched_stage = text_string(runtime.raw_stage);
+      const bool prep_stage_latched =
+          !latched_stage.empty() && latched_stage.find("printing") == std::string::npos &&
+          !is_filament_stage(latched_stage) &&
+          !is_download_stage(latched_stage, effective_gcode_state) &&
+          is_post_download_handoff_stage(latched_stage, effective_gcode_state);
+      const bool layer_advanced =
+          runtime.current_layer > previous_layer && runtime.current_layer > 0;
+      const bool progress_advanced =
+          has_progress_update && !runtime.progress_is_download_related &&
+          runtime.progress_percent > previous_progress_percent + 0.5f;
+      if (prep_stage_latched && (layer_advanced || progress_advanced)) {
+        ESP_LOGI(kTag,
+                 "Stale prep stage '%s' cleared (layer %u->%u, progress %.1f->%.1f%%) - printing",
+                 latched_stage.c_str(), static_cast<unsigned>(previous_layer),
+                 static_cast<unsigned>(runtime.current_layer),
+                 static_cast<double>(previous_progress_percent),
+                 static_cast<double>(runtime.progress_percent));
+        copy_text(&runtime.raw_stage, "printing");
       }
     }
     runtime.print_error_code = print_error_code;
@@ -2932,6 +2968,28 @@ void PrinterClient::task_loop() {
 
     process_pending_chamber_light_command();
     process_pending_print_command();
+
+    // Periodic pushall safety net: while a job is live, request a full status
+    // snapshot at a slow cadence so latched values (stage, layer, AMS) re-sync
+    // even when an incremental diff update was missed.
+    if (mqtt_connected_ && subscription_acknowledged_ && received_payload_) {
+      const uint32_t last_pushall = periodic_pushall_tick_.load();
+      if (last_pushall == 0) {
+        periodic_pushall_tick_ = now;
+      } else if (tick_elapsed(last_pushall, now, pdMS_TO_TICKS(kPeriodicPushallMs))) {
+        const LocalPrinterRuntimeState runtime = runtime_state_copy();
+        const bool job_live = runtime.lifecycle == PrintLifecycleState::kPreparing ||
+                              runtime.lifecycle == PrintLifecycleState::kPrinting ||
+                              runtime.lifecycle == PrintLifecycleState::kPaused;
+        if (job_live) {
+          ESP_LOGD(kTag, "Periodic pushall (job live) to re-sync latched fields");
+          publish_request(kPushAll);
+        }
+        periodic_pushall_tick_ = now;
+      }
+    } else {
+      periodic_pushall_tick_ = 0;
+    }
 
     ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(250));
   }

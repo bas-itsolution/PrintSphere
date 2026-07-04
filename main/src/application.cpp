@@ -399,8 +399,6 @@ void Application::run() {
       local_mqtt_handoff_until_tick_ = 0;
       ESP_LOGI(kTag, "Local MQTT handoff complete: local MQTT connected");
     }
-    const bool local_mqtt_handoff_active =
-        tick_deadline_active(local_mqtt_handoff_until_tick_.load(), now_tick);
     const bool camera_page_visible = ui_.is_camera_page_visible();
 
     if (source_mode_ == SourceMode::kHybrid && last_camera_page_active_ && !camera_page_visible &&
@@ -411,6 +409,9 @@ void Application::run() {
     if (source_mode_changed || wifi_lost || source_mode_ != SourceMode::kHybrid) {
       hybrid_local_gate_open_ = false;
       hybrid_camera_cooldown_deadline_ = 0;
+      // The handoff window is a hybrid-only concept; drop any stale deadline
+      // on mode switch / Wi-Fi loss so it cannot block cloud MQTT later.
+      local_mqtt_handoff_until_tick_ = 0;
     }
 
     BambuCloudSnapshot cloud_snapshot = cloud_client_.snapshot();
@@ -457,10 +458,22 @@ void Application::run() {
                    to_string(routing_model), cloud_snapshot.configured,
                    cloud_snapshot.session_connected, cloud_snapshot.printer_online,
                    hybrid_cloud_allows_warm_local);
+          if (!local_snapshot.local_connected) {
+            // Serialize the connect phase: give the local MQTT TLS handshake a
+            // quiet window without concurrent cloud HTTPS fetches / cloud MQTT
+            // (re)connects. TLS handshakes are the heap spikes — steady-state
+            // traffic can overlap. Cleared early once local MQTT connects.
+            local_mqtt_handoff_until_tick_ = now_tick + kLocalMqttHandoffCooldown;
+            ESP_LOGI(kTag, "Hybrid mode: pausing cloud traffic for local MQTT handoff");
+          }
         }
         hybrid_local_gate_open_ = true;
       }
     }
+    // Evaluated after the gate block so a handoff window opened above pauses
+    // cloud traffic in this very iteration (not one loop later).
+    const bool local_mqtt_handoff_active =
+        tick_deadline_active(local_mqtt_handoff_until_tick_.load(), now_tick);
 
     bool local_network_ready = false;
     if (source_mode_ == SourceMode::kLocalOnly) {
@@ -502,10 +515,17 @@ void Application::run() {
     const bool hybrid_local_path_healthy =
         source_mode_ == SourceMode::kHybrid && local_network_ready && local_printer_enabled_ &&
         local_snapshot.local_connected && hybrid_local_status_supported_now && !hybrid_prefers_cloud;
-    bool cloud_network_ready = wifi_connected && source_mode_ != SourceMode::kLocalOnly;
-    if (source_mode_ == SourceMode::kHybrid && hybrid_local_path_healthy && !preview_page_active) {
-      cloud_network_ready = false;
-    }
+    // Keep the cloud session warm in hybrid mode even while the local path is
+    // the active status source. Tearing the whole cloud path down (previous
+    // behaviour: cloud_network_ready=false) parked the cloud task in the
+    // "Waiting for Wi-Fi" loop (visible session flapping) and forced a fresh
+    // HTTPS login + bindings + preview burst — several TLS handshakes right
+    // next to the local MQTT/camera connections — whenever the user swiped to
+    // the preview page. Instead the session/token stays alive and only the
+    // heavy traffic sources (live MQTT, HTTPS fetches) are gated below.
+    const bool cloud_network_ready = wifi_connected && source_mode_ != SourceMode::kLocalOnly;
+    const bool hybrid_cloud_idle =
+        source_mode_ == SourceMode::kHybrid && hybrid_local_path_healthy && !preview_page_active;
     const bool cloud_live_mqtt_enabled =
         cloud_network_ready &&
         !local_mqtt_handoff_active &&
@@ -514,7 +534,8 @@ void Application::run() {
           (hybrid_prefers_cloud || !hybrid_local_path_healthy)));
     const bool pause_cloud_fetches =
         source_mode_ == SourceMode::kHybrid &&
-        ((hybrid_local_gate_open_ &&
+        (hybrid_cloud_idle ||
+         (hybrid_local_gate_open_ &&
           (camera_page_active || page_transition_active || hybrid_camera_cooldown_active)) ||
          local_mqtt_handoff_active || !cloud_network_ready);
     cloud_client_.set_network_ready(cloud_network_ready);
@@ -750,18 +771,16 @@ void Application::run() {
     const bool provisioning_active =
         snapshot.setup_ap_active ||
         snapshot.connection == PrinterConnectionState::kWaitingForCredentials;
-    bool keep_screen_awake;
-    if (filament_wake_enabled_ && is_filament && !is_external_spool) {
-      // AMS auto filament change: suppress wake, let display sleep
-      keep_screen_awake = provisioning_active || camera_page_active || page_transition_active;
-    } else {
-      keep_screen_awake =
-          provisioning_active || snapshot.print_active || camera_page_active || page_transition_active;
-    }
+    // Hard wake-lock only for provisioning / camera page / page transitions.
+    // An active print no longer forces the screen awake — it just switches the
+    // energy policy to the "during print" timeouts (see update_power_save).
+    const bool keep_screen_awake =
+        provisioning_active || camera_page_active || page_transition_active;
     if (filament_wake_enabled_ && is_filament && is_external_spool) {
+      // External-spool filament change needs the user at the printer: wake once.
       ui_.request_wake_display();
     }
-    ui_.update_power_save(on_battery, keep_screen_awake);
+    ui_.update_power_save(on_battery, keep_screen_awake, snapshot.print_active);
 
     cloud_client_.set_low_power_mode(camera_page_active || page_transition_active ||
                                      (on_battery && ui_.is_low_power_mode_active() &&

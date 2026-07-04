@@ -12,5 +12,5 @@ Ordner:
 Packaging-Beispiel aus dem Projektroot:
 
 ```powershell
-python tools/package_initial_flash.py --build-dir build --release-root release/2.8c --version v1.6-2.8c
+python tools/package_initial_flash.py --build-dir build-lcd_2_8c --release-root release/2.8c --version v1.6.1-2.8c
 ```

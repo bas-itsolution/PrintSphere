@@ -661,7 +661,12 @@ esp_codec_dev_handle_t bsp_audio_codec_microphone_init(void)
 #define LVGL_TICK_PERIOD_MS (CONFIG_BSP_DISPLAY_LVGL_TICK)
 #define LVGL_MAX_SLEEP_MS (CONFIG_BSP_DISPLAY_LVGL_MAX_SLEEP)
 #define BSP_LCD_QSPI_PCLK_HZ (80 * 1000 * 1000)
-#define LVGL_BUFFER_HEIGHT_PSRAM (12)
+// NOTE: under TE_SYNC the adapter forces LV_DISPLAY_RENDER_MODE_FULL and
+// allocates a full-frame draw buffer regardless of buffer_height (see
+// display_manager_pick_render_mode / display_manager_default_buffer_pixels).
+// These heights therefore only size max_transfer_sz and the partial-buffer
+// fallback path when tear mode ends up as NONE.
+#define LVGL_BUFFER_HEIGHT_PSRAM (24)
 #define LVGL_BUFFER_HEIGHT_INTERNAL (12)
 
 esp_err_t bsp_display_brightness_init(void)
