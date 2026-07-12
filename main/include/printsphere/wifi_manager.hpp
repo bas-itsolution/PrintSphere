@@ -11,6 +11,12 @@
 
 namespace printsphere {
 
+struct VisibleWifiNetwork {
+  std::string ssid;
+  int rssi = -127;
+  bool auth_required = true;
+};
+
 class WifiManager {
  public:
   esp_err_t initialize_network_stack();
@@ -23,6 +29,7 @@ class WifiManager {
   std::string setup_access_point_password() const;
   std::string setup_access_point_ip() const;
   std::vector<std::string> scan_visible_networks() const;
+  std::vector<VisibleWifiNetwork> scan_visible_network_details() const;
 
  private:
   static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id,

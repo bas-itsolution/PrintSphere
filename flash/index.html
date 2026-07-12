@@ -163,6 +163,22 @@
         outline: 3px solid rgba(22, 124, 128, 0.16);
       }
 
+      input[type="text"] {
+        width: 100%;
+        min-height: 48px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--ink);
+        font: inherit;
+        padding: 0 14px;
+      }
+
+      input[type="text"]:focus {
+        border-color: var(--accent);
+        outline: 3px solid rgba(22, 124, 128, 0.16);
+      }
+
       .release-info {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -231,6 +247,22 @@
         background: var(--accent-dark);
       }
 
+      .secondary-button {
+        min-height: 48px;
+        border: 1px solid var(--accent);
+        border-radius: 6px;
+        background: transparent;
+        color: var(--accent-dark);
+        cursor: pointer;
+        font: inherit;
+        font-weight: 780;
+        padding: 0 22px;
+      }
+
+      .secondary-button:hover {
+        background: #e0f0ec;
+      }
+
       .support {
         color: var(--muted);
         font-size: 0.88rem;
@@ -282,6 +314,40 @@
         margin-top: 26px;
       }
 
+      .ota-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 20px;
+        align-items: end;
+        margin-top: 26px;
+        padding: 24px 28px;
+        border: 1px solid rgba(23, 32, 33, 0.12);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .ota-panel h2 {
+        margin: 0 0 8px;
+        font-size: 1.15rem;
+      }
+
+      .ota-panel p {
+        max-width: 720px;
+        margin: 0 0 16px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .ota-actions {
+        display: flex;
+        align-items: end;
+        gap: 12px;
+      }
+
+      .ota-address {
+        min-width: min(360px, 100%);
+      }
+
       .detail {
         padding: 18px;
         border-top: 1px solid rgba(23, 32, 33, 0.16);
@@ -313,6 +379,10 @@
         .release-info {
           grid-template-columns: 1fr;
         }
+
+        .ota-panel {
+          grid-template-columns: 1fr;
+        }
       }
 
       @media (max-width: 560px) {
@@ -337,6 +407,15 @@
         .caption {
           align-items: flex-start;
           flex-direction: column;
+        }
+
+        .ota-actions {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .ota-address {
+          min-width: 0;
         }
       }
     </style>
@@ -375,7 +454,7 @@
               </div>
               <div class="fact">
                 <span>Version</span>
-                <strong id="firmware-version">v1.6.1</strong>
+                <strong id="firmware-version">v1.6.2</strong>
               </div>
               <div class="fact">
                 <span>Flash offset</span>
@@ -407,7 +486,7 @@
               alt="PrintSphere circular display device"
             >
             <div class="caption">
-              <strong id="caption-version">Stable v1.6.1</strong>
+              <strong id="caption-version">Stable v1.6.2</strong>
               <span id="caption-path">release/initial/printsphere_full.bin</span>
             </div>
           </aside>
@@ -424,7 +503,22 @@
           </div>
           <div class="detail">
             <h2>Next Step</h2>
-            <p>After installing, the device opens the PrintSphere setup Wi-Fi for configuration.</p>
+            <p>Keep the USB cable connected after flashing. The installer will scan for Wi-Fi networks and configure PrintSphere directly over USB.</p>
+          </div>
+        </section>
+
+        <section class="ota-panel" aria-labelledby="ota-title">
+          <div>
+            <h2 id="ota-title">OTA Update — keep your configuration</h2>
+            <p>For an existing PrintSphere, open its Web Config page and use the matching OTA image. This updates the inactive firmware slot and retains Wi-Fi, printer and display settings.</p>
+            <p class="note warning" id="ota-note">Select the same hardware variant that is installed on your device.</p>
+          </div>
+          <div class="ota-actions">
+            <div class="field ota-address">
+              <label for="ota-device-address">Device IP address</label>
+              <input id="ota-device-address" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. 192.168.1.42">
+            </div>
+            <button class="secondary-button" id="ota-open-button" type="button">Open OTA updater</button>
           </div>
         </section>
       </main>
@@ -433,20 +527,22 @@
     <script>
       const firmwares = [
         {
-          label: "Stable v1.6.1 (1.75 AMOLED)",
+          label: "Stable v1.6.2 (1.75 AMOLED)",
           channel: "Stable",
-          version: "v1.6.1",
+          version: "v1.6.2",
           path: "../release/initial/printsphere_full.bin",
           displayPath: "release/initial/printsphere_full.bin",
-          note: "Factory flash erases device data before installing v1.6.1. Devices already on v1.6 can update via OTA. Devices on v1.5.x or older still need the one-time full flash before OTA updates are used again.",
+          otaUrl: "https://github.com/cptkirki/PrintSphere/blob/main/release/ota/printsphere_ota.bin",
+          note: "Factory flash erases device data before installing v1.6.2. Keep the USB cable connected after the flash: the Wi-Fi picker appears automatically, so the setup hotspot is only needed as a fallback.",
         },
         {
-          label: 'Stable v1.6.1 (2.8" LCD)',
+          label: 'Stable v1.6.2 (2.8" LCD)',
           channel: "Stable",
-          version: "v1.6.1-2.8C",
+          version: "v1.6.2-2.8C",
           path: "../release/2.8c/initial/printsphere_full.bin",
           displayPath: "release/2.8c/initial/printsphere_full.bin",
-          note: 'Factory flash image for the ESP32-S3-Touch-LCD-2.8C hardware variant on v1.6.1. Devices already on v1.6-2.8c can move to the matching OTA image; older devices should stay on the factory flash path first.',
+          otaUrl: "https://github.com/cptkirki/PrintSphere/blob/main/release/2.8c/ota/printsphere_ota.bin",
+          note: 'Factory flash image for the ESP32-S3-Touch-LCD-2.8C hardware variant on v1.6.2. Keep the USB cable connected after the flash: the Wi-Fi picker appears automatically, so the setup hotspot is only needed as a fallback.',
         },
       ];
 
@@ -458,6 +554,9 @@
       const betaWarning = document.querySelector("#beta-warning");
       const captionVersion = document.querySelector("#caption-version");
       const captionPath = document.querySelector("#caption-path");
+      const otaNote = document.querySelector("#ota-note");
+      const otaDeviceAddress = document.querySelector("#ota-device-address");
+      const otaOpenButton = document.querySelector("#ota-open-button");
       let manifestUrl = null;
 
       function appendOptionGroup(label, entries) {
@@ -479,11 +578,11 @@
           name: "PrintSphere",
           version: firmware.version,
           new_install_prompt_erase: false,
-          new_install_improv_wait_time: 0,
+          new_install_improv_wait_time: 30,
           builds: [
             {
               chipFamily: "ESP32-S3",
-              improv: false,
+              improv: true,
               parts: [{ path: imageUrl, offset: 0 }],
             },
           ],
@@ -509,6 +608,8 @@
         betaWarning.hidden = firmware.channel !== "Beta";
         captionVersion.textContent = `${firmware.channel} ${firmware.version}`;
         captionPath.textContent = firmware.displayPath;
+        otaNote.textContent = `Open the updater, then flash the matching ${firmware.version} OTA image. Your configuration is retained.`;
+        otaOpenButton.dataset.otaUrl = firmware.otaUrl;
         setManifest(firmware);
       }
 
@@ -525,6 +626,17 @@
       updateSelection();
       customElements.whenDefined("esp-web-install-button").then(updateSelection);
       select.addEventListener("change", updateSelection);
+      otaOpenButton.addEventListener("click", () => {
+        const address = otaDeviceAddress.value.trim()
+          .replace(/^https?:\/\//i, "")
+          .replace(/\/.*$/, "");
+        if (!address) {
+          otaDeviceAddress.focus();
+          return;
+        }
+        const otaUrl = otaOpenButton.dataset.otaUrl;
+        window.open(`http://${address}/?ota_url=${encodeURIComponent(otaUrl)}`, "_blank", "noopener");
+      });
     </script>
   </body>
 </html>

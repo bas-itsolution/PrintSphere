@@ -3105,6 +3105,9 @@ esp_err_t SetupPortal::handle_root(httpd_req_t* request) {
   html += "var otaUrlWrap=document.getElementById('ota-url-progress-wrap');";
   html += "var otaUrlBar=document.getElementById('ota-url-progress-bar');";
   html += "var otaUrlPoll=null;";
+  html += "var otaUrlFromInstallPage=new URLSearchParams(window.location.search).get('ota_url');"
+          "if(otaUrlFromInstallPage&&otaUrlInput){otaUrlInput.value=otaUrlFromInstallPage;"
+          "if(otaUrlStatus)otaUrlStatus.textContent='OTA image selected by the PrintSphere install page.';}";
   html += "function githubToRaw(u){"
           "if(u.indexOf('github.com/')===-1)return u;"
           "var p=u.replace('https://github.com/','');"

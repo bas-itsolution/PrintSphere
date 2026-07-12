@@ -1,5 +1,7 @@
 set(PRINTSPHERE_MAIN_REQUIRES
     app_update
+    esp_driver_uart
+    esp_driver_usb_serial_jtag
     esp_pm
     esp_https_ota
     esp_driver_gpio
@@ -54,6 +56,7 @@ idf_component_register(
         "src/printer_state.cpp"
         "src/debug_log_buffer.cpp"
         "src/setup_portal.cpp"
+        "src/serial_provisioner.cpp"
         "src/status_resolver.cpp"
         "src/time_sync.cpp"
         "src/ui.cpp"

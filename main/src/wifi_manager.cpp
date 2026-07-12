@@ -171,6 +171,16 @@ std::string WifiManager::setup_access_point_ip() const {
 
 std::vector<std::string> WifiManager::scan_visible_networks() const {
   std::vector<std::string> networks;
+  const std::vector<VisibleWifiNetwork> details = scan_visible_network_details();
+  networks.reserve(details.size());
+  for (const VisibleWifiNetwork& network : details) {
+    networks.push_back(network.ssid);
+  }
+  return networks;
+}
+
+std::vector<VisibleWifiNetwork> WifiManager::scan_visible_network_details() const {
+  std::vector<VisibleWifiNetwork> networks;
   if (!wifi_started_) {
     return networks;
   }
@@ -208,8 +218,12 @@ std::vector<std::string> WifiManager::scan_visible_networks() const {
     if (ssid.empty()) {
       continue;
     }
-    if (std::find(networks.begin(), networks.end(), ssid) == networks.end()) {
-      networks.push_back(ssid);
+    const auto existing = std::find_if(networks.begin(), networks.end(),
+                                       [&ssid](const VisibleWifiNetwork& network) {
+                                         return network.ssid == ssid;
+                                       });
+    if (existing == networks.end()) {
+      networks.push_back({ssid, records[i].rssi, records[i].authmode != WIFI_AUTH_OPEN});
     }
   }
 

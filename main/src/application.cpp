@@ -240,7 +240,8 @@ void wait_for_next_iteration(Ui& ui, TickType_t delay) {
 
 Application::Application()
     : setup_portal_(config_store_, wifi_manager_, cloud_client_, printer_client_, camera_client_,
-                    ui_, pmu_manager_, audio_notifier_) {
+                    ui_, pmu_manager_, audio_notifier_),
+      serial_provisioner_(config_store_, wifi_manager_) {
   cloud_client_.set_config_store(&config_store_);
   // Route printer online/offline events from the Bambu Cloud MQTT feed to the
   // local PrinterClient so it can collapse its reconnect backoff the moment the
@@ -272,6 +273,9 @@ void Application::run() {
   }
 
   ESP_ERROR_CHECK(setup_portal_.start());
+  if (serial_provisioner_.start() != ESP_OK) {
+    ESP_LOGW(kTag, "USB Wi-Fi setup unavailable; use the fallback setup access point");
+  }
   ESP_ERROR_CHECK(pmu_manager_.initialize());
   ESP_LOGI(kTag, "Heap status: internal=%u bytes psram=%u bytes",
            static_cast<unsigned int>(heap_caps_get_free_size(MALLOC_CAP_INTERNAL)),

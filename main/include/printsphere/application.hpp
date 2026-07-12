@@ -9,6 +9,7 @@
 #include "printsphere/pmu.hpp"
 #include "printsphere/printer_client.hpp"
 #include "printsphere/setup_portal.hpp"
+#include "printsphere/serial_provisioner.hpp"
 #include "printsphere/ui.hpp"
 #include "printsphere/wifi_manager.hpp"
 #include "freertos/FreeRTOS.h"
@@ -28,6 +29,7 @@ class Application {
   P1sCameraClient camera_client_{};
   Ui ui_{};
   SetupPortal setup_portal_;
+  SerialProvisioner serial_provisioner_;
   PmuManager pmu_manager_{};
   AudioNotifier audio_notifier_{};
   bool local_printer_enabled_ = false;
