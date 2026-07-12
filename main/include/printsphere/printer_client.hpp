@@ -157,10 +157,8 @@ class PrinterClient {
   std::atomic<bool> client_started_{false};
   std::atomic<bool> mqtt_connected_{false};
   // Latched once the MQTT session successfully reached CONNECTED state at least
-  // once for the currently active profile. Used to skip the expensive TCP probe
-  // on subsequent reconnect attempts so esp-mqtt's internal reconnect
-  // (network.reconnect_timeout_ms) can do the heavy lifting without tearing
-  // down and reinitialising the client (and its TLS session) every time.
+  // once for the currently active profile. Used to keep later reconnect
+  // backoffs short for a profile that has already proven its configuration.
   // Reset in stop_client() when the client is actually destroyed.
   std::atomic<bool> session_ever_established_{false};
   std::atomic<bool> received_payload_{false};
@@ -185,7 +183,6 @@ class PrinterClient {
   std::atomic<uint32_t> rebuild_request_tick_{0};
   std::atomic<uint32_t> rebuild_delay_ticks_{0};
   std::atomic<bool> runtime_dirty_{false};
-  uint32_t consecutive_probe_failures_{0};
   uint32_t consecutive_mqtt_errors_{0};
   // Reconnect-storm telemetry (atomic so the setup-portal HTTP task can read
   // them without locking the worker mutex). consecutive_mqtt_errors_ above is
