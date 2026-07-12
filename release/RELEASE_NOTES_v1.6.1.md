@@ -40,8 +40,3 @@ Patch release on top of v1.6 focused on display stability during prints, power-s
 - `esp_lvgl_adapter` v0.6.2 is available upstream but is intentionally not adopted in this release: its changes do not affect PrintSphere's code paths, and updating would drop the local worker-scheduling patch.
 - X2D and A2L support is based on the published protocol behavior of these models (identical V2 payload structures as H2/P2S and A1 respectively); it has not yet been verified against physical devices. The X2D Developer-Mode requirement for local status mirrors the H2 series policy and is a one-line capability-table change if it turns out to differ.
 
-## Tested Focus
-
-- Waveshare ESP32-S3 Touch AMOLED 1.75 (ESP-IDF v5.5.4).
-- Full local print on P1S over local MQTT with chamber camera streaming, cloud preview fetch, filament change (AMS), and live stage transitions (preheat → load → clean nozzle → printing).
-- Boot verification of per-variant tear-avoid mode selection.
