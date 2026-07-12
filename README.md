@@ -1,199 +1,133 @@
 # PrintSphere
 
-Round ESP32-S3 printer companion for Bambu Lab with a circular display, touch setup, hybrid cloud/local routing, and the current code paths for cover preview, camera snapshots, and battery-aware operation.
+PrintSphere is a round ESP32-S3 companion display for Bambu Lab printers. It shows print progress, temperatures, remaining time, AMS information, errors, cover previews and supported camera snapshots.
 
-<img width="400" height="300" alt="image" src="https://github.com/user-attachments/assets/820c2e9b-10a7-4430-949c-e8b0adc1357d" /><img width="400" height="300" alt="image" src="https://github.com/user-attachments/assets/5923dc59-0123-4df1-b54d-673c6dbad23b" />
+It works directly with Bambu Cloud, the printer's local connection, or both. Home Assistant is not required.
 
-## MakerWorld
+<img width="400" height="300" alt="PrintSphere AMOLED display" src="https://github.com/user-attachments/assets/820c2e9b-10a7-4430-949c-e8b0adc1357d" /> <img width="400" height="300" alt="PrintSphere interface" src="https://github.com/user-attachments/assets/5923dc59-0123-4df1-b54d-673c6dbad23b" />
 
-- MakerWorld model: `https://makerworld.com/de/models/2517189-printsphere-bambu-status-display-standalone-1-75`
+Latest stable version: **v1.6.2**
 
-## Hardware And Stack
+## Supported hardware
 
-- ESP-IDF `v5.5.4`
-- LVGL `v9.5.0`
-- Waveshare ESP32-S3 AMOLED 1.75
-- AXP2101 PMU integration via `XPowersLib`
-- no Home Assistant required
+Choose the correct hardware in the installer:
 
-## Current Codebase Features
+| Hardware | Installer name | Battery support |
+| --- | --- | --- |
+| Waveshare ESP32-S3 Touch AMOLED 1.75 | `1.75 AMOLED` | Yes, including charging and USB detection |
+| Waveshare ESP32-S3 Touch LCD 2.8C | `2.8" LCD` | Yes, using the board's battery measurement |
 
-- official Waveshare BSP for display, touch, and LVGL
-- NVS-based configuration storage plus LittleFS sound storage
-- `AP+STA` Wi-Fi manager
-- local setup portal on `esp_http_server`
-- Web Config that stays open during initial provisioning and switches to PIN/session unlock on the home network afterwards
-- Bambu Cloud login flow with email/password plus email-code or 2FA handling
-- hybrid routing logic between Bambu Cloud and the local printer path
-- cloud MQTT as the primary live cloud status path plus metadata / cover preview handling
-- local MQTT status path with live reconnect logic from the web portal
-- embedded Bambu CA bundle for local MQTT TLS verification
-- merged status, metrics, temperatures, errors, and HMS data depending on model and source availability
-- cloud cover image/title page in the UI where available
-- local camera snapshot page with tap refresh and periodic refresh while open
-- arc color tuning from Web Config with live preview behavior
-- hardware display rotation with touch alignment and a Web Config restart action
-- chamber light toggle path on supported models
-- battery and USB status with power-aware behavior
-- embedded on-device error text lookup database without a separate storage partition
-- configurable sound notifications with per-event WAV upload
-- V2 protocol support for P2S and H2 series (`snow`-based spool detection, `vir_slot` filament info)
-- multi-AMS pages with individual tray pills and EXT spool indicator
-- OTA firmware update support
+Firmware for one variant must not be installed on the other variant.
 
-## Flashing
+## Install PrintSphere
 
-for the first use please use the Webflasher: https://cptkirki.github.io/PrintSphere/flash/
-For OTA updates, use [`release/ota/printsphere_ota.bin`](release/ota/printsphere_ota.bin).
+You need a USB data cable and a desktop version of Chrome or Edge.
 
-PrintSphere v1.6 changes the partition layout for expanded NVS and LittleFS sound storage.
-Devices on v1.5.x or older need one full USB/WebSerial flash before OTA updates are used again.
+1. Open the **[PrintSphere Web Installer](https://cptkirki.github.io/PrintSphere/flash/)**.
+2. Select your hardware variant.
+3. Connect the device by USB and choose **Install selected firmware**.
+4. Keep the USB cable connected after installation.
+5. The installer searches for nearby Wi-Fi networks and sends your Wi-Fi details directly to PrintSphere over USB.
+6. Open Web Config using the IP address shown by PrintSphere and connect your Bambu printer.
 
-### manual flashing:
+### Wi-Fi fallback
 
-[`release/initial/printsphere_full.bin`](release/initial/printsphere_full.bin) is the merged initial-flash image for empty devices.
+If USB Wi-Fi setup is unavailable, connect to the fallback access point:
 
-Versioned builds are archived in the `archive/` subfolder of each release directory.
+- Wi-Fi name: `PrintSphere-Setup`
+- Password: `printsphere`
+- Setup page: [http://192.168.4.1](http://192.168.4.1)
 
-### PrintSphere Web Installer
+Select your home Wi-Fi there. After PrintSphere connects, continue through Web Config on its home-network IP address.
 
-`https://cptkirki.github.io/PrintSphere/flash/`
+## Connect your printer
 
-- stable is selected by default
-- newer beta factory images are available from the firmware selector
-- Chrome or Edge with Web Serial support is required
+Web Config offers three connection modes:
 
-### Web Flashers
+- **Hybrid (recommended):** combines cloud and local data and automatically uses the better status path. Local camera snapshots remain available on supported printers.
+- **Cloud only:** uses Bambu Cloud for status and cover previews. Local MQTT and local camera snapshots are disabled.
+- **Local only:** connects directly to the printer without requiring a Bambu Cloud account. Cloud cover previews are unavailable.
 
-`web.esphome.io`
-`https://web.esphome.io/`
+For Bambu Cloud, enter your account details and complete an email-code or 2FA step if requested.
 
-- connect USB
-- choose the COM port
-- do not use "Prepare for first use"
-- install `printsphere_full.bin` directly
+For a local connection, enter:
 
-`espboards.dev`
-`https://www.espboards.dev/tools/program/`
+- Printer IP address or hostname
+- Printer serial number
+- Printer access code
 
-- write `printsphere_full.bin` to address `0x0`
+Cloud and local printer settings can normally be connected without restarting PrintSphere.
 
-`esptool-js`
-`https://espressif.github.io/esptool-js/`
+## Update without losing your settings
 
-- write `printsphere_full.bin` to address `0x0`
+Use an **OTA update** for an already configured PrintSphere. OTA keeps Wi-Fi, printer profiles and display settings.
 
-The bootloader is already included in the merged image.
+1. Open the [PrintSphere Web Installer](https://cptkirki.github.io/PrintSphere/flash/).
+2. Select the same hardware variant currently installed on your device.
+3. In **OTA Update**, enter the IP address shown by PrintSphere.
+4. Open the OTA updater and confirm **Flash from URL** in Web Config.
 
-### Local Build / Flash
+You can also open Web Config directly and use its **Firmware Update** section. It accepts either a matching OTA `.bin` file or a GitHub firmware URL.
 
-If you clone the repo and build it yourself:
+The public installer performs the initial USB flash. OTA itself runs through Web Config so the firmware can safely update the inactive application slot and retain the configuration.
 
-```bash
-idf.py -p PORT flash
-```
+> Devices running v1.5.x or older need one initial USB flash before using v1.6.x OTA images because v1.6 introduced a new partition layout.
 
-Alternatively, write the merged image directly with `esptool`:
+## Main features
 
-```bash
-esptool.exe --chip esp32s3 --port PORT write_flash 0x0 release/initial/printsphere_full.bin
-```
+- Print progress, remaining time, layers and temperatures
+- AMS and external-spool information
+- Cloud cover preview and project title
+- Local JPEG camera snapshots on supported printers
+- Pause, resume and stop controls
+- Chamber-light control on supported printers
+- Multi-printer profiles and live printer switching
+- Bambu HMS and error descriptions on the device
+- Adjustable display rotation and status colors
+- Battery-aware dimming and screen-off settings
+- Configurable sound notifications and custom WAV files
+- Secure Web Config access using a temporary PIN
+- OTA firmware updates that retain the device configuration
 
-## Setup Flow
+## Printer and camera support
 
-1. Flash [`printsphere_full.bin`](https://github.com/cptkirki/PrintSphere/blob/main/release/initial/printsphere_full.bin)
-2. On first boot, the device starts a setup AP:
-   - SSID: `PrintSphere-Setup`
-   - password: `printsphere`
-3. Open `http://192.168.4.1` and save your home Wi-Fi.
-4. After the reboot, reopen Web Config on the device IP in your home network.
-5. During provisioning, Web Config stays open without a PIN until the selected source path is ready.
-6. Choose the connection mode you want to run:
-   - `Cloud only`
-   - `Local only`
-   - `Hybrid`
-7. Complete only the source path that your chosen mode requires:
-   - `Cloud only`: connect Bambu Cloud
-   - `Local only`: connect the local printer path
-   - `Hybrid`: connect either path first; the portal unlocks setup once one path is working, and you can add the other later
-8. Bambu Cloud login supports:
-   - email + password
-   - optional email code
-   - optional 2FA code
-9. The local printer path uses:
-   - printer IP or hostname
-   - printer serial number
-   - access code
-10. After provisioning is complete, Web Config on the home network uses the on-device PIN/session unlock flow.
-   - hold anywhere on the display for about one second to request a six-digit PIN
-   - PIN lifetime: about 2 minutes
-   - unlocked browser session: about 10 minutes
+PrintSphere contains status paths for:
 
-Cloud and local credentials can usually be applied live from Web Config without another reboot. Changing the connection mode itself or applying a new screen rotation still restarts the device.
+`A1`, `A1 Mini`, `A2L`, `P1P`, `P1S`, `P2S`, `H2C`, `H2D`, `H2D Pro`, `H2S`, `X1`, `X1C`, `X1E`, `X2D`
 
-## Connection Modes
+Local JPEG snapshots are available on `A1`, `A1 Mini`, `A2L`, `P1P` and `P1S`.
 
-- `Hybrid`:
-  Current default recommendation. PrintSphere tries to combine cloud and local data, picks the better active path at runtime, and still uses the local camera when available. Provisioning is considered complete once Wi-Fi is connected and either Cloud or Local is working.
-- `Cloud only`:
-  Cloud monitoring and cover preview only. Local MQTT and the local camera page are disabled. Provisioning is complete once Wi-Fi and Bambu Cloud are connected.
-- `Local only`:
-  Local MQTT monitoring and the local camera path without requiring Bambu Cloud. Provisioning is complete once Wi-Fi and the local printer path are connected. The cloud cover page is not used in this mode.
+`P2S`, the `H2` family, the `X1` family and `X2D` use RTSP video. The ESP32-S3 cannot decode these streams, so their live camera view is not available in PrintSphere. Cloud cover previews can still be shown.
 
-## Model Notes
-
-- Cloud can now also carry progress, remaining time, layers, and temperatures on many models.
-- In `Hybrid`, the current code prefers cloud status for `P2S` and the `H2` family.
-- The current code has local status paths for:
-  `A1`, `A1 Mini`, `P1P`, `P1S`, `X1`, `X1C`, `X1E`
-- `P2S` local status works via V2 protocol fields (`snow`, `vir_slot`); some V1 fields may be absent or stale.
-- The `H2` family requires Developer Mode for local status.
-- Camera snapshots are only available on `A1`, `A1 Mini`, `P1P`, and `P1S`.
-  These models expose a local JPEG snapshot endpoint that the ESP32-S3 can handle.
-  Newer models (`P2S`, `H2`, `X1` series) use RTSP video streams only — the ESP32-S3 hardware lacks the memory and processing power to decode these streams. This is a hardware limitation that cannot be worked around with software changes alone.
-- The code currently exposes chamber light control on supported `P1S`, `P2`, `H2`, and `X1` models.
-
-## UI Overview
-
-- Page 1:
-  can show progress ring, lifecycle state, job name, temperatures, layers, remaining time, Wi-Fi, battery, and USB state
-- Page 2:
-  can show cloud cover preview and title
-- Page 3:
-  can show local camera snapshots when that path is working
-- Long-press on the display:
-  requests a Web Config PIN
-- Tap on the camera page:
-  requests a refresh of the current image
-- Tap the center logo on page 1 on supported printers:
-  requests a chamber light toggle
-- Dynamic secondary text such as IP addresses, project titles, and portal hints uses a more complete font for better glyph coverage
+The `H2` family and `X2D` require Developer Mode for local printer status. Availability of individual values can differ between printer models and firmware versions.
 
 ## Web Config
 
-Web Config currently exposes sections for:
+Web Config includes:
 
-- `Step 1 - Wi-Fi`
-- `Connection Mode`
-- `Step 2 - Bambu Cloud`
-- `Step 3 - Local Printer Path`
-- `Screen Rotation`
-- `Arc Colors`
+- Wi-Fi scanning and configuration
+- Cloud and local printer connections
+- Connection mode and printer selection
+- Display rotation, colors and time zone
+- Battery, USB and screen power-saving options
+- AMS display behavior
+- Sound notification settings
+- Portal PIN protection
+- Firmware updates by file upload or URL
 
-During initial provisioning, Web Config stays open until the selected source mode has at least one working path. After that, the portal uses the on-device PIN/session unlock flow on the home network.
+After initial setup, Web Config can be protected with a temporary six-digit PIN. Long-press the PrintSphere display for about one second to request a PIN.
 
-Arc colors are intended to preview live immediately and can be saved without restarting the device. Screen rotation uses the display controller's hardware rotation and applies on restart so touch stays aligned.
+## Known limitations
 
-<img width="1078" height="686" alt="image" src="https://github.com/user-attachments/assets/9b80b93e-5963-46da-a284-471fd7be27f0" />
+- RTSP camera streams cannot be displayed on the ESP32-S3.
+- Newer printer families have received less real-world testing than `P1S` and `P1P`.
+- Some local V2 protocol values can differ from the older V1 printer fields.
+- Cloud features require internet access and a working Bambu Cloud account.
 
-## Current Limitations
+## Links
 
-- **Camera snapshots are limited to `A1`, `A1 Mini`, `P1P`, `P1S` due to ESP32-S3 hardware constraints.** Newer models only offer RTSP streams which the ESP32-S3 cannot decode.
-- cloud/local behavior on newer families still needs broader real-world validation
-- `P2S` local status uses V2 protocol; some legacy fields may behave differently than on older printers
-- `H2` local status requires Developer Mode
-- local MQTT TLS now uses an embedded Bambu CA bundle
-- `Local only` works, but the broadest hands-on validation so far is still in `Hybrid` and `Cloud only`
-- most hands-on testing so far has been on `P1S` and `P1P`
-
-
+- [PrintSphere Web Installer](https://cptkirki.github.io/PrintSphere/flash/)
+- [MakerWorld model](https://makerworld.com/de/models/2517189-printsphere-bambu-status-display-standalone-1-75)
+- [v1.6.2 release notes](release/RELEASE_NOTES_v1.6.2.md)
+- [Building, cloning and manual flashing](docs/Build/README.md)
+- [License](LICENSE)

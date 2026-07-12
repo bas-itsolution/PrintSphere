@@ -1,5 +1,5 @@
-build/
-build-*/
+/build/
+/build-*/
 managed_components/
 sdkconfig
 sdkconfig.old
