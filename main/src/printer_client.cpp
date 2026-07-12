@@ -7,9 +7,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
-#include <fcntl.h>
 #include <inttypes.h>
-#include <unistd.h>
 #include <utility>
 
 #include "cJSON.h"
@@ -21,8 +19,6 @@
 #include "esp_random.h"
 #include "esp_timer.h"
 #include "esp_wifi.h"
-#include "lwip/inet.h"
-#include "lwip/sockets.h"
 
 namespace printsphere {
 
@@ -1404,7 +1400,6 @@ void PrinterClient::handle_mqtt_event(esp_mqtt_event_handle_t event) {
       const uint64_t connect_elapsed_ms =
           connect_started_ms != 0 ? now_ms() - connect_started_ms : 0;
       cancel_client_rebuild();
-      consecutive_probe_failures_ = 0;
       consecutive_mqtt_errors_ = 0;
       mqtt_total_successes_.fetch_add(1, std::memory_order_relaxed);
       mqtt_last_success_ms_.store(now_ms(), std::memory_order_relaxed);
@@ -2525,10 +2520,8 @@ void PrinterClient::schedule_client_rebuild(const char* reason, uint32_t delay_m
     return;
   }
   // Once the session has been established at least once for this profile,
-  // subsequent rebuilds are cheap (no TCP probe, no fresh TLS session —
-  // esp-mqtt's internal reconnect handles it). Cap long backoffs so a
-  // transient drop doesn't strand us in a 30 s retry window, which in
-  // local-only mode nobody would wake us out of.
+  // cap long backoffs so a transient drop does not strand us in a 30 s retry
+  // window, which in local-only mode nobody would wake us out of.
   rebuild_request_tick_ = xTaskGetTickCount();
   rebuild_delay_ticks_ = delay_ticks;
   mqtt_last_attempt_ms_.store(now_ms(), std::memory_order_relaxed);
@@ -2572,7 +2565,6 @@ void PrinterClient::notify_cloud_presence(bool online) {
   // The task loop picks this up within ~250 ms. Also zero the failure counters
   // so the next attempt restarts from the aggressive early-retry cadence.
   ESP_LOGI(kTag, "Cloud presence hint: printer online, collapsing backoff and retrying local MQTT");
-  consecutive_probe_failures_ = 0;
   consecutive_mqtt_errors_ = 0;
   if (client_rebuild_requested_.load()) {
     rebuild_request_tick_ = xTaskGetTickCount();
@@ -2608,7 +2600,6 @@ void PrinterClient::set_network_ready(bool ready) {
     // backoff window computed before the link loss. This is the local-only
     // counterpart to notify_cloud_presence(true).
     ESP_LOGI(kTag, "Wi-Fi ready hint: collapsing backoff and waking task");
-    consecutive_probe_failures_ = 0;
     consecutive_mqtt_errors_ = 0;
     if (client_rebuild_requested_.load()) {
       rebuild_request_tick_ = xTaskGetTickCount();
@@ -2650,7 +2641,7 @@ void PrinterClient::task_loop() {
           continue;
         }
         // Rebuild delay not yet elapsed — wait instead of falling through to
-        // the client_==nullptr path which would immediately start a new TCP probe.
+        // the client_==nullptr path which would immediately start a new TLS session.
         ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(1000));
         continue;
       }
@@ -2729,87 +2720,6 @@ void PrinterClient::task_loop() {
       ESP_LOGI(kTag, "Connecting to printer MQTT %s:%u (serial=%s, user=%s)",
                connection.host.c_str(), static_cast<unsigned int>(connection.mqtt_port),
                connection.serial.c_str(), connection.mqtt_username.c_str());
-
-      // Best-effort reachability check before the first TLS+MQTT handshake.
-      // Once this profile has established a session, skip the probe and let
-      // esp-mqtt's internal reconnect path handle transient LAN drops.
-      const bool skip_probe = session_ever_established_.load();
-      if (skip_probe) {
-        ESP_LOGI(kTag, "TCP probe: skipping (session previously established, relying on esp-mqtt reconnect)");
-        consecutive_probe_failures_ = 0;
-      } else {
-        int probe_sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-        if (probe_sock >= 0) {
-          struct sockaddr_in dest = {};
-          dest.sin_family = AF_INET;
-          dest.sin_port = htons(connection.mqtt_port);
-          const bool host_is_ipv4 = inet_aton(connection.host.c_str(), &dest.sin_addr) != 0;
-
-          int rc = -1;
-          if (!host_is_ipv4) {
-            ESP_LOGW(kTag,
-                     "TCP probe skipped for non-IPv4 host %s; MQTT client will resolve it",
-                     connection.host.c_str());
-          } else {
-            int flags = fcntl(probe_sock, F_GETFL, 0);
-            if (flags >= 0) {
-              fcntl(probe_sock, F_SETFL, flags | O_NONBLOCK);
-            }
-
-            rc = connect(probe_sock, reinterpret_cast<struct sockaddr*>(&dest), sizeof(dest));
-            if (rc < 0 && errno == EINPROGRESS) {
-              fd_set wset;
-              fd_set eset;
-              FD_ZERO(&wset);
-              FD_ZERO(&eset);
-              FD_SET(probe_sock, &wset);
-              FD_SET(probe_sock, &eset);
-              struct timeval tv = {};
-              tv.tv_sec = 1;
-              tv.tv_usec = 0;
-              int sel = select(probe_sock + 1, nullptr, &wset, &eset, &tv);
-              if (sel > 0) {
-                int sock_err = 0;
-                socklen_t optlen = sizeof(sock_err);
-                getsockopt(probe_sock, SOL_SOCKET, SO_ERROR, &sock_err, &optlen);
-                if (sock_err != 0) {
-                  rc = -1;
-                  errno = sock_err;
-                } else {
-                  rc = 0;
-                }
-              } else if (sel == 0) {
-                rc = -1;
-                errno = ETIMEDOUT;
-              } else {
-                rc = -1;
-              }
-            }
-          }
-
-          const int probe_errno = rc < 0 ? errno : 0;
-          close(probe_sock);
-
-          if (host_is_ipv4 && rc < 0) {
-            ++consecutive_probe_failures_;
-            ESP_LOGW(kTag,
-                     "TCP probe: %s:%u not reachable before MQTT attempt "
-                     "(errno=%d/%s, failures=%u); continuing to esp-mqtt",
-                     connection.host.c_str(), static_cast<unsigned>(connection.mqtt_port),
-                     probe_errno, socket_errno_label(probe_errno),
-                     static_cast<unsigned>(consecutive_probe_failures_));
-            log_wifi_link_diagnostics("TCP probe failed");
-          } else if (host_is_ipv4) {
-            ESP_LOGI(kTag, "TCP probe: port %u reachable on %s",
-                     static_cast<unsigned>(connection.mqtt_port),
-                     connection.host.c_str());
-            consecutive_probe_failures_ = 0;
-          }
-        } else {
-          ESP_LOGW(kTag, "TCP probe: socket create failed (errno=%d/%s); continuing to esp-mqtt",
-                   errno, socket_errno_label(errno));
-        }
-      }
 
       esp_mqtt_client_config_t mqtt_cfg = {};
       mqtt_cfg.broker.address.transport = MQTT_TRANSPORT_OVER_SSL;

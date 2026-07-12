@@ -89,15 +89,6 @@ bool hybrid_local_status_supported(const PrinterSnapshot& local_snapshot,
       preferred_model_for_routing(local_snapshot, cloud_snapshot));
 }
 
-bool hybrid_needs_local_path(const PrinterSnapshot& local_snapshot,
-                             const BambuCloudSnapshot& cloud_snapshot) {
-  const PrinterModel model = preferred_model_for_routing(local_snapshot, cloud_snapshot);
-  if (model == PrinterModel::kUnknown) {
-    return true;
-  }
-  return printer_model_has_jpeg_camera(model) || !printer_model_prefers_cloud_status(model);
-}
-
 bool route_allows_local_jpeg_camera(SourceMode source_mode,
                                     const PrinterSnapshot& local_snapshot,
                                     const BambuCloudSnapshot& cloud_snapshot) {
@@ -422,9 +413,6 @@ void Application::run() {
         source_mode_ != SourceMode::kCloudOnly &&
         hybrid_local_status_supported(local_snapshot, cloud_snapshot);
     const PrinterModel routing_model = preferred_model_for_routing(local_snapshot, cloud_snapshot);
-    const bool hybrid_local_path_needed =
-        source_mode_ == SourceMode::kHybrid &&
-        hybrid_needs_local_path(local_snapshot, cloud_snapshot);
     const bool routing_model_has_jpeg_camera = printer_model_has_jpeg_camera(routing_model);
     const bool camera_model_has_jpeg =
         route_allows_local_jpeg_camera(source_mode_, local_snapshot, cloud_snapshot);
@@ -438,26 +426,21 @@ void Application::run() {
     const bool hybrid_local_camera_demand =
         source_mode_ == SourceMode::kHybrid && routing_model_has_jpeg_camera &&
         hybrid_cloud_allows_warm_local;
-    const bool hybrid_local_demand =
-        source_mode_ == SourceMode::kHybrid && hybrid_local_path_needed &&
-        hybrid_local_camera_demand;
+    // Local MQTT is an independent status/command transport. It must not be
+    // gated by camera type or cloud presence; only the heavier JPEG camera path
+    // remains demand-driven below.
     if (source_mode_ == SourceMode::kHybrid) {
-      if (!wifi_connected || !local_printer_enabled_ || !hybrid_local_path_needed ||
-          !hybrid_local_demand) {
+      if (!wifi_connected || !local_printer_enabled_) {
         if (hybrid_local_gate_open_) {
-          ESP_LOGI(kTag, "Hybrid mode: no local demand, disabling local path");
+          ESP_LOGI(kTag, "Hybrid mode: disabling local MQTT path");
         }
         hybrid_local_gate_open_ = false;
       } else {
         if (!hybrid_local_gate_open_) {
           ESP_LOGI(kTag,
-                   "Hybrid mode: JPEG camera model needs warm local path "
-                   "(page_visible=%d page_active=%d cooldown=%d model=%s cloud_cfg=%d "
-                   "cloud_session=%d cloud_online=%d cloud_allows=%d)",
-                   camera_page_visible, camera_page_active, hybrid_camera_cooldown_active,
-                   to_string(routing_model), cloud_snapshot.configured,
-                   cloud_snapshot.session_connected, cloud_snapshot.printer_online,
-                   hybrid_cloud_allows_warm_local);
+                   "Hybrid mode: local printer configured, enabling local MQTT "
+                   "(model=%s camera_demand=%d)",
+                   to_string(routing_model), hybrid_local_camera_demand ? 1 : 0);
           if (!local_snapshot.local_connected) {
             // Serialize the connect phase: give the local MQTT TLS handshake a
             // quiet window without concurrent cloud HTTPS fetches / cloud MQTT
@@ -475,16 +458,15 @@ void Application::run() {
     const bool local_mqtt_handoff_active =
         tick_deadline_active(local_mqtt_handoff_until_tick_.load(), now_tick);
 
-    bool local_network_ready = false;
-    if (source_mode_ == SourceMode::kLocalOnly) {
-      local_network_ready = wifi_connected;
-    } else if (source_mode_ == SourceMode::kHybrid) {
-      local_network_ready = wifi_connected && local_printer_enabled_ && hybrid_local_path_needed &&
-                            hybrid_local_demand &&
-                            (hybrid_local_gate_open_ || local_snapshot.local_connected);
-    }
+    const bool local_network_ready =
+        wifi_connected && local_printer_enabled_ &&
+        (source_mode_ == SourceMode::kLocalOnly ||
+         (source_mode_ == SourceMode::kHybrid && hybrid_local_gate_open_));
+    const bool local_camera_network_ready =
+        local_network_ready &&
+        (source_mode_ == SourceMode::kLocalOnly || hybrid_local_camera_demand);
     printer_client_.set_network_ready(local_network_ready);
-    camera_client_.set_network_ready(local_network_ready);
+    camera_client_.set_network_ready(local_camera_network_ready);
 
     local_snapshot.wifi_connected = wifi_connected;
     local_snapshot.wifi_ip = wifi_ip;
@@ -503,7 +485,8 @@ void Application::run() {
     resolve_ui_state(local_snapshot);
 
     const bool camera_enabled =
-        source_mode_ != SourceMode::kCloudOnly && local_printer_enabled_ && local_network_ready &&
+        source_mode_ != SourceMode::kCloudOnly && local_printer_enabled_ &&
+        local_camera_network_ready &&
         camera_model_has_jpeg && local_snapshot.local_connected && !local_mqtt_handoff_active &&
         camera_page_active &&
         ui_.screen_power_mode() != ScreenPowerMode::kOff;

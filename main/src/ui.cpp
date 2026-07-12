@@ -1104,9 +1104,10 @@ std::string preview_subnote_text(const PrinterSnapshot& snapshot) {
 
 std::string camera_note_text(const PrinterSnapshot& snapshot) {
   if (snapshot.camera_blob && !snapshot.camera_blob->empty()) {
-    // Image loaded: show printer status (downloading / clean nozzle /
-    // printing / paused / failed / ...) above the JPEG.
-    return lifecycle_label(snapshot);
+    // The camera header shares its position with the global battery overlay.
+    // Prefer the battery state whenever a battery is installed (including
+    // charging); on USB-only power the header instead shows the print status.
+    return (snapshot.battery_present || snapshot.charging) ? std::string{} : lifecycle_label(snapshot);
   }
   if (snapshot.connection == PrinterConnectionState::kWaitingForCredentials) {
     return "Set up printer";
@@ -2029,7 +2030,7 @@ void Ui::apply_snapshot_locked(const PrinterSnapshot& snapshot, bool force_ring_
 
   const std::string battery_icon = battery_icon_text(snapshot);
   const std::string battery_pct = battery_pct_text(snapshot);
-  const bool show_battery = snapshot.battery_present;
+  const bool show_battery = snapshot.battery_present || snapshot.charging;
   set_label_text_if_changed(battery_icon_label_, show_battery ? battery_icon : "");
   set_label_text_if_changed(battery_pct_label_, show_battery ? battery_pct : "");
 
@@ -3241,6 +3242,13 @@ void Ui::apply_page_visibility() {
   const bool on_page2 = !scrolling_ ? (active_page_ == kPageIdxPreview) : true;
   const bool on_page3 = !scrolling_ ? (active_page_ == kPageIdxCamera) : true;
   const bool settled_page1 = !scrolling_ && active_page_ == kPageIdxMain;
+  // These labels live on lv_layer_top(), so the pager cannot clip them.  The
+  // camera header uses the same position: on battery power (including while
+  // charging) show the battery indicator there; on USB-only power show the
+  // camera page's print status instead.
+  const bool show_battery_overlay =
+      (last_snapshot_.battery_present || last_snapshot_.charging) &&
+      (settled_page1 || (!scrolling_ && active_page_ == kPageIdxCamera));
   const bool portal_hint_has_priority = portal_pin_active_ || portal_session_active_;
   const bool show_portal_hint =
       settled_page1 && !portal_hint_text_.empty() &&
@@ -3256,6 +3264,8 @@ void Ui::apply_page_visibility() {
   set_hidden(status_label_, !on_page1);
   set_hidden(detail_label_, !on_page1 || !detail_visible_ || show_portal_hint);
   set_hidden(layer_row_, !on_page1);
+  set_hidden(battery_icon_label_, !show_battery_overlay);
+  set_hidden(battery_pct_label_, !show_battery_overlay);
   set_hidden(nozzle_prefix_label_, !on_page1);
   set_hidden(nozzle_value_label_, !on_page1);
   set_hidden(nozzle_aux_label_, !on_page1 || !nozzle_aux_visible_);
