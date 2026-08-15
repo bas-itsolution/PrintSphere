@@ -72,9 +72,6 @@ CONFIG_LWIP_MAX_SOCKETS=16
 # IDF 5.5 FatFS enables exFAT in ffconf.h; exFAT requires long filename support.
 CONFIG_FATFS_LFN_HEAP=y
 CONFIG_FATFS_MAX_LFN=255
-# Keep a single in-flight LCD transaction; IDF6 direct PSRAM DMA is sensitive
-# to bus pressure while TLS/HTTP/camera work is active.
-CONFIG_BSP_LCD_TRANS_QUEUE_DEPTH=1
 CONFIG_SPI_MASTER_IN_IRAM=y
 CONFIG_LV_BUILD_EXAMPLES=n
 CONFIG_LV_BUILD_DEMOS=n
