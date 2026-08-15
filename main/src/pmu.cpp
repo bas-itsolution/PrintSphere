@@ -320,6 +320,30 @@ PowerSnapshot PmuManager::sample() const {
 
 }  // namespace printsphere
 
+#elif defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+
+#include "esp_log.h"
+
+namespace printsphere {
+
+namespace {
+constexpr char kTag[] = "printsphere.pmu";
+}
+
+esp_err_t PmuManager::initialize() {
+  if (!initialized_) {
+    initialized_ = true;
+    ESP_LOGW(kTag, "Battery telemetry is not ported for ESP32-S3-Touch-LCD-1.85C Rev2.0 yet");
+  }
+  return ESP_OK;
+}
+
+PowerSnapshot PmuManager::sample() const {
+  return {};
+}
+
+}  // namespace printsphere
+
 #else
 #error "Unknown PrintSphere hardware variant"
 #endif

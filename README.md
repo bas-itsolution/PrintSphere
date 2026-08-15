@@ -16,6 +16,7 @@ Choose the correct hardware in the installer:
 | --- | --- | --- |
 | Waveshare ESP32-S3 Touch AMOLED 1.75 | `1.75 AMOLED` | Yes, including charging and USB detection |
 | Waveshare ESP32-S3 Touch LCD 2.8C | `2.8" LCD` | Yes, using the board's battery measurement |
+| Waveshare ESP32-S3 Touch LCD 1.85C Rev2.0 | `1.85" LCD` | Not yet |
 
 Firmware for one variant must not be installed on the other variant.
 

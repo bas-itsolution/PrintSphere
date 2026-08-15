@@ -16,6 +16,12 @@ $variants = @(
         BuildDir = "build-lcd_2_8c"
         ReleaseRoot = "release/2.8c"
         Version = "$Version-2.8c"
+    },
+    @{
+        Name = "lcd_1_85c"
+        BuildDir = "build-lcd_1_85c"
+        ReleaseRoot = "release/1.85c"
+        Version = "$Version-1.85c"
     }
 )
 
@@ -46,4 +52,4 @@ foreach ($variant in $variants) {
 }
 
 Write-Host ""
-Write-Host "Packaging fuer beide Hardware-Varianten abgeschlossen." -ForegroundColor Green
+Write-Host "Packaging fuer alle Hardware-Varianten abgeschlossen." -ForegroundColor Green

@@ -24,6 +24,8 @@
 #include "bsp/esp32_s3_touch_amoled_1_75.h"
 #elif defined(PRINTSPHERE_HW_VARIANT_LCD_2_8C)
 #include "bsp/esp32_s3_touch_lcd_2_8c.h"
+#elif defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+#include "bsp/esp32_s3_touch_lcd_1_85c.h"
 #else
 #error "Unknown PrintSphere hardware variant"
 #endif
@@ -287,6 +289,30 @@ void apply_touch_rotation_flags(DisplayRotation rotation, bsp_display_cfg_t* cfg
         cfg->touch_flags.swap_xy = 0;
         cfg->touch_flags.mirror_x = 1;
         cfg->touch_flags.mirror_y = 1;
+        break;
+    }
+#elif defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+    switch (rotation) {
+      case DisplayRotation::k90:
+        cfg->touch_flags.swap_xy = 1;
+        cfg->touch_flags.mirror_x = 0;
+        cfg->touch_flags.mirror_y = 1;
+        break;
+      case DisplayRotation::k180:
+        cfg->touch_flags.swap_xy = 0;
+        cfg->touch_flags.mirror_x = 1;
+        cfg->touch_flags.mirror_y = 1;
+        break;
+      case DisplayRotation::k270:
+        cfg->touch_flags.swap_xy = 1;
+        cfg->touch_flags.mirror_x = 1;
+        cfg->touch_flags.mirror_y = 0;
+        break;
+      case DisplayRotation::k0:
+      default:
+        cfg->touch_flags.swap_xy = 0;
+        cfg->touch_flags.mirror_x = 0;
+        cfg->touch_flags.mirror_y = 0;
         break;
     }
 #else

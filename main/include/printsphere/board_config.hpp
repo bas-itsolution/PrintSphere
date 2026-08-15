@@ -40,6 +40,24 @@ constexpr gpio_num_t kQspiData3 = GPIO_NUM_47;
 
 constexpr int kAxp2101Address = 0;
 constexpr char kBoardName[] = "ESP32-S3-Touch-LCD-2.8C";
+#elif defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+constexpr int kDisplayWidth = 360;
+constexpr int kDisplayHeight = 360;
+
+constexpr gpio_num_t kI2cScl = GPIO_NUM_10;
+constexpr gpio_num_t kI2cSda = GPIO_NUM_11;
+
+constexpr gpio_num_t kTouchInterrupt = GPIO_NUM_4;
+constexpr gpio_num_t kTouchReset = GPIO_NUM_NC;
+
+constexpr gpio_num_t kQspiClk = GPIO_NUM_40;
+constexpr gpio_num_t kQspiData0 = GPIO_NUM_46;
+constexpr gpio_num_t kQspiData1 = GPIO_NUM_45;
+constexpr gpio_num_t kQspiData2 = GPIO_NUM_42;
+constexpr gpio_num_t kQspiData3 = GPIO_NUM_41;
+
+constexpr int kAxp2101Address = 0;
+constexpr char kBoardName[] = "ESP32-S3-Touch-LCD-1.85C Rev2.0";
 #else
 #error "Unknown PrintSphere hardware variant"
 #endif

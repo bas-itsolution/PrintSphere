@@ -30,6 +30,7 @@ Always select the hardware explicitly. Each variant must use its own build direc
 | --- | --- | --- | --- |
 | Waveshare ESP32-S3 Touch AMOLED 1.75 | `amoled_1_75` | `build-amoled_1_75` | `release/` |
 | Waveshare ESP32-S3 Touch LCD 2.8C | `lcd_2_8c` | `build-lcd_2_8c` | `release/2.8c/` |
+| Waveshare ESP32-S3 Touch LCD 1.85C Rev2.0 | `lcd_1_85c` | `build-lcd_1_85c` | `release/1.85c/` |
 
 Do not reuse one variant's build directory for the other variant.
 
@@ -61,6 +62,20 @@ idf.py -B build-lcd_2_8c -DPRINTSPHERE_HW_VARIANT=lcd_2_8c -p COM7 build flash m
 
 Replace `COM7` with the correct port on your system.
 
+## Build the LCD 1.85C Rev2.0 variant
+
+```powershell
+idf.py -B build-lcd_1_85c -DPRINTSPHERE_HW_VARIANT=lcd_1_85c reconfigure build
+```
+
+Build, flash and open the serial monitor:
+
+```powershell
+idf.py -B build-lcd_1_85c -DPRINTSPHERE_HW_VARIANT=lcd_1_85c -p COM7 build flash monitor
+```
+
+Replace `COM7` with the correct port on your system.
+
 ## Flash or monitor without rebuilding
 
 AMOLED 1.75:
@@ -77,6 +92,13 @@ idf.py -B build-lcd_2_8c -DPRINTSPHERE_HW_VARIANT=lcd_2_8c -p COM7 flash
 idf.py -B build-lcd_2_8c -DPRINTSPHERE_HW_VARIANT=lcd_2_8c -p COM7 monitor
 ```
 
+LCD 1.85C Rev2.0:
+
+```powershell
+idf.py -B build-lcd_1_85c -DPRINTSPHERE_HW_VARIANT=lcd_1_85c -p COM7 flash
+idf.py -B build-lcd_1_85c -DPRINTSPHERE_HW_VARIANT=lcd_1_85c -p COM7 monitor
+```
+
 ## Package both release variants
 
 Build both variants first. Then run:
@@ -91,6 +113,7 @@ The script creates the four current release images plus versioned archive copies
 | --- | --- | --- |
 | AMOLED 1.75 | `release/initial/printsphere_full.bin` | `release/ota/printsphere_ota.bin` |
 | LCD 2.8C | `release/2.8c/initial/printsphere_full.bin` | `release/2.8c/ota/printsphere_ota.bin` |
+| LCD 1.85C Rev2.0 | `release/1.85c/initial/printsphere_full.bin` | `release/1.85c/ota/printsphere_ota.bin` |
 
 Versioned copies are stored below the corresponding `archive/` directories.
 
@@ -106,6 +129,12 @@ LCD 2.8C:
 
 ```powershell
 python tools/package_initial_flash.py --build-dir build-lcd_2_8c --release-root release/2.8c --version v1.6.2-2.8c
+```
+
+LCD 1.85C Rev2.0:
+
+```powershell
+python tools/package_initial_flash.py --build-dir build-lcd_1_85c --release-root release/1.85c --version v1.6.2-1.85c
 ```
 
 ## Initial image versus OTA image
@@ -131,6 +160,12 @@ LCD 2.8C:
 esptool.exe --chip esp32s3 --port COM7 write_flash 0x0 release/2.8c/initial/printsphere_full.bin
 ```
 
+LCD 1.85C Rev2.0:
+
+```powershell
+esptool.exe --chip esp32s3 --port COM7 write_flash 0x0 release/1.85c/initial/printsphere_full.bin
+```
+
 The merged image already contains the bootloader and partition table.
 
 ## Reconfigure and clean builds
@@ -140,6 +175,7 @@ Use `reconfigure` first when CMake settings, dependencies or hardware options ch
 ```powershell
 idf.py -B build-amoled_1_75 -DPRINTSPHERE_HW_VARIANT=amoled_1_75 reconfigure
 idf.py -B build-lcd_2_8c -DPRINTSPHERE_HW_VARIANT=lcd_2_8c reconfigure
+idf.py -B build-lcd_1_85c -DPRINTSPHERE_HW_VARIANT=lcd_1_85c reconfigure
 ```
 
 `fullclean` is normally unnecessary. If a build cache is genuinely broken, remove or recreate only the affected variant's build directory.
