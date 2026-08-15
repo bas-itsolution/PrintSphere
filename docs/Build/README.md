@@ -188,7 +188,7 @@ idf.py -B build-lcd_1_85c -DPRINTSPHERE_HW_VARIANT=lcd_1_85c reconfigure
 | `main/CMakeLists.txt` | Application sources and ESP-IDF component dependencies |
 | `sdkconfig.defaults` | Shared ESP-IDF project defaults |
 | `partitions.csv` | NVS, OTA and LittleFS partition layout |
-| `tools/package_release.ps1` | Packages both hardware variants |
+| `tools/package_release.ps1` | Packages all hardware variants |
 | `tools/package_initial_flash.py` | Creates merged initial and OTA images |
 | `flash/index.html` | Browser installer page |
 | `release/` | Published firmware images and release notes |
@@ -196,7 +196,7 @@ idf.py -B build-lcd_1_85c -DPRINTSPHERE_HW_VARIANT=lcd_1_85c reconfigure
 ## Release checklist
 
 1. Set the release version in the root `CMakeLists.txt`.
-2. Build and test both hardware variants.
+2. Build and test all hardware variants.
 3. Package both variants with an explicit version.
 4. Verify the four generated images and their versioned archive copies.
 5. Update the browser installer and release notes.
