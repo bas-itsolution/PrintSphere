@@ -470,7 +470,7 @@ lv_display_t *bsp_display_start_with_config(bsp_display_cfg_t *cfg) {
     }
     s_indev = bsp_display_indev_init(cfg, s_display);
     if (s_indev == NULL) {
-        return NULL;
+        ESP_LOGW(TAG, "touch unavailable; continuing with display-only UI");
     }
     if (bsp_display_brightness_init() != ESP_OK) {
         return NULL;
