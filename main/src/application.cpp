@@ -338,12 +338,18 @@ void Application::run() {
   source_mode_ = config_store_.load_source_mode();
   const PrinterConnection printer_connection = config_store_.load_active_printer_profile().to_connection();
   cloud_client_.configure(cloud_credentials, printer_connection.serial);
-  ESP_ERROR_CHECK(cloud_client_.start());
+  if (const esp_err_t err = cloud_client_.start(); err != ESP_OK) {
+    ESP_LOGW(kTag, "Cloud client unavailable this boot: %s", esp_err_to_name(err));
+  }
 
   printer_client_.configure(printer_connection);
-  ESP_ERROR_CHECK(printer_client_.start());
+  if (const esp_err_t err = printer_client_.start(); err != ESP_OK) {
+    ESP_LOGW(kTag, "Printer client unavailable this boot: %s", esp_err_to_name(err));
+  }
   camera_client_.configure(printer_connection);
-  ESP_ERROR_CHECK(camera_client_.start());
+  if (const esp_err_t err = camera_client_.start(); err != ESP_OK) {
+    ESP_LOGW(kTag, "Camera client unavailable this boot: %s", esp_err_to_name(err));
+  }
 
   ESP_LOGI(kTag, "Bootstrap complete");
 

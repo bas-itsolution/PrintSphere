@@ -1290,7 +1290,8 @@ esp_err_t PrinterClient::start() {
   }
 
   const BaseType_t result =
-      xTaskCreate(&PrinterClient::task_entry, "printer_client", 8192, this, 5, &task_handle_);
+      xTaskCreateWithCaps(&PrinterClient::task_entry, "printer_client", 8192, this, 5,
+                          &task_handle_, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
   return result == pdPASS ? ESP_OK : ESP_FAIL;
 }
 
