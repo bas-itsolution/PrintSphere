@@ -1357,43 +1357,54 @@ void build_lcd_diagnostic_screen(lv_obj_t* screen) {
   constexpr int center_x = width / 2;
   constexpr int center_y = height / 2;
 
-  for (int x = 0; x <= width; x += 30) {
-    diagnostic_rect(screen, x, 0, x == center_x ? 3 : 1, height,
-                    x == center_x ? 0xFFFFFF : 0x263241);
+  // Four edge colors make rotation/mirroring obvious without relying on text.
+  diagnostic_rect(screen, 0, 0, width, 8, 0xFF3030);           // top: red
+  diagnostic_rect(screen, width - 8, 0, 8, height, 0x30FF30);  // right: green
+  diagnostic_rect(screen, 0, height - 8, width, 8, 0x306DFF);  // bottom: blue
+  diagnostic_rect(screen, 0, 0, 8, height, 0xFFFFFF);          // left: white
+
+  // Full-height vertical rails. If LCD flush rows are shifted, these will look
+  // stair-stepped instead of straight.
+  constexpr int kRailXs[] = {60, 90, 120, 150, 180, 210, 240, 270, 300};
+  for (int x : kRailXs) {
+    const bool center = x == center_x;
+    diagnostic_rect(screen, x - (center ? 2 : 1), 18, center ? 4 : 2, 324,
+                    center ? 0xFFFFFF : 0x00D6FF);
   }
-  for (int y = 0; y <= height; y += 30) {
-    diagnostic_rect(screen, 0, y, width, y == center_y ? 3 : 1,
-                    y == center_y ? 0xFFFFFF : 0x263241);
+
+  // Full-width horizontal rails with alternating thickness. This catches column
+  // addressing mistakes and makes row drift easy to spot.
+  constexpr int kRailYs[] = {60, 90, 120, 150, 180, 210, 240, 270, 300};
+  for (int y : kRailYs) {
+    const bool center = y == center_y;
+    diagnostic_rect(screen, 18, y - (center ? 2 : 1), 324, center ? 4 : 2,
+                    center ? 0xFFFFFF : 0xFFB000);
   }
 
-  diagnostic_rect(screen, 0, 0, width, 7, 0xFF3030);           // top: red
-  diagnostic_rect(screen, width - 7, 0, 7, height, 0x30FF30);  // right: green
-  diagnostic_rect(screen, 0, height - 7, width, 7, 0x306DFF);  // bottom: blue
-  diagnostic_rect(screen, 0, 0, 7, height, 0xFFFFFF);          // left: white
+  diagnostic_circle(screen, 340, 0x8A5CF6, 2);
+  diagnostic_circle(screen, 300, 0x94A3B8, 1);
+  diagnostic_circle(screen, 220, 0x334155, 1);
 
-  diagnostic_circle(screen, 340, 0xFFB000, 2);
-  diagnostic_circle(screen, 306, 0x00D6FF, 2);
-  diagnostic_circle(screen, 240, 0x666666, 1);
-  diagnostic_circle(screen, 120, 0x666666, 1);
+  diagnostic_rect(screen, center_x - 5, center_y - 5, 10, 10, 0xFF00FF);
 
-  diagnostic_rect(screen, center_x - 26, center_y - 2, 52, 4, 0xFFFFFF);
-  diagnostic_rect(screen, center_x - 2, center_y - 26, 4, 52, 0xFFFFFF);
-  diagnostic_rect(screen, center_x - 4, center_y - 4, 8, 8, 0xFF00FF);
+  // Keep all labels on black pads so text quality can be judged separately
+  // from the line-pattern test.
+  diagnostic_rect(screen, 82, 30, 196, 32, 0x000000);
+  diagnostic_label(screen, "LCD DIAG V2", 90, 32, 180, &dosis_32, 0xFFD166);
 
-  diagnostic_label(screen, "TOP RED", 120, 13, 120, &dosis_20, 0xFFB0B0);
-  diagnostic_label(screen, "LEFT", 18, 166, 70, &dosis_20, 0xFFFFFF, LV_TEXT_ALIGN_LEFT);
-  diagnostic_label(screen, "RIGHT", 272, 166, 70, &dosis_20, 0x88FF88, LV_TEXT_ALIGN_RIGHT);
-  diagnostic_label(screen, "BOTTOM BLUE", 100, 324, 160, &dosis_20, 0x91B8FF);
+  diagnostic_rect(screen, 96, 128, 168, 28, 0x000000);
+  diagnostic_label(screen, "VERT LINES", 106, 132, 148, &dosis_20, 0x00D6FF);
 
-  diagnostic_label(screen, "TL", 50, 46, 50, &dosis_20, 0xFFFFFF);
-  diagnostic_label(screen, "TR", 260, 46, 50, &dosis_20, 0xFFFFFF);
-  diagnostic_label(screen, "BL", 50, 292, 50, &dosis_20, 0xFFFFFF);
-  diagnostic_label(screen, "BR", 260, 292, 50, &dosis_20, 0xFFFFFF);
+  diagnostic_rect(screen, 84, 206, 192, 28, 0x000000);
+  diagnostic_label(screen, "HORIZ LINES", 94, 210, 172, &dosis_20, 0xFFB000);
 
-  diagnostic_label(screen, "LCD 1.85C", 90, 125, 180, &dosis_32, 0xFFD166);
-  diagnostic_label(screen, "CENTER 180,180", 75, 190, 210, &dosis_20, 0xFFFFFF);
-  diagnostic_label(screen, "30px grid / 340 amber / 306 cyan", 46, 221, 268,
-                   &dosis_20, 0x94A3B8);
+  diagnostic_rect(screen, 83, 286, 194, 28, 0x000000);
+  diagnostic_label(screen, "CENTER 180,180", 93, 290, 174, &dosis_20, 0xFFFFFF);
+
+  diagnostic_label(screen, "TL", 40, 72, 48, &dosis_20, 0xFFFFFF);
+  diagnostic_label(screen, "TR", 272, 72, 48, &dosis_20, 0xFFFFFF);
+  diagnostic_label(screen, "BL", 40, 254, 48, &dosis_20, 0xFFFFFF);
+  diagnostic_label(screen, "BR", 272, 254, 48, &dosis_20, 0xFFFFFF);
 }
 #endif
 

@@ -1,13 +1,11 @@
 #include "bsp/esp32_s3_touch_lcd_1_85c.h"
 
 #include <inttypes.h>
-#include <string.h>
 
 #include "driver/gpio.h"
 #include "driver/ledc.h"
 #include "driver/spi_master.h"
 #include "esp_check.h"
-#include "esp_heap_caps.h"
 #include "esp_io_expander.h"
 #include "esp_lcd_panel_interface.h"
 #include "esp_lcd_panel_io.h"
@@ -24,13 +22,12 @@ static const char *TAG = "ESP32-S3-Touch-LCD-1.85C";
 
 #define BSP_LCD_QSPI_PCLK_HZ (40 * 1000 * 1000)
 #define BSP_LCD_DRAW_BUFFER_HEIGHT (16)
-#define BSP_LCD_DMA_STAGING_ROWS (4)
 #define BSP_LCD_BACKLIGHT_TIMER LEDC_TIMER_0
 #define BSP_LCD_BACKLIGHT_CHANNEL LEDC_CHANNEL_0
 #define BSP_LCD_BACKLIGHT_RESOLUTION LEDC_TIMER_13_BIT
 #define BSP_LCD_BACKLIGHT_MAX_DUTY ((1 << BSP_LCD_BACKLIGHT_RESOLUTION) - 1)
 #ifndef CONFIG_BSP_LCD_TRANS_QUEUE_DEPTH
-#define CONFIG_BSP_LCD_TRANS_QUEUE_DEPTH 10
+#define CONFIG_BSP_LCD_TRANS_QUEUE_DEPTH 1
 #endif
 
 #define BSP_EXIO_TOUCH_RESET IO_EXPANDER_PIN_NUM_0
@@ -44,7 +41,6 @@ static bool s_i2c_initialized = false;
 static bool s_backlight_initialized = false;
 static esp_io_expander_handle_t s_io_expander = NULL;
 static esp_lcd_panel_handle_t s_panel_handle = NULL;
-static esp_lcd_panel_handle_t s_adapter_panel_handle = NULL;
 static esp_lcd_panel_io_handle_t s_panel_io_handle = NULL;
 static esp_lcd_touch_handle_t s_touch_handle = NULL;
 static lv_display_t *s_display = NULL;
@@ -56,129 +52,6 @@ sdmmc_card_t *bsp_sdcard = NULL;
 extern esp_err_t esp_lcd_touch_new_i2c_cst816(const esp_lcd_panel_io_handle_t io,
                                               const esp_lcd_touch_config_t *config,
                                               esp_lcd_touch_handle_t *out_touch);
-
-typedef struct {
-    esp_lcd_panel_t base;
-    esp_lcd_panel_handle_t target;
-    uint16_t *rotation_buffer;
-    size_t rotation_buffer_pixels;
-} qspi_dma_panel_t;
-
-static qspi_dma_panel_t s_dma_panel = {0};
-
-static qspi_dma_panel_t *qspi_dma_panel_from_base(esp_lcd_panel_t *panel) {
-    return panel ? (qspi_dma_panel_t *)panel->user_data : NULL;
-}
-
-static bool qspi_dma_panel_ensure_buffer(qspi_dma_panel_t *ctx, size_t pixels) {
-    if (ctx->rotation_buffer != NULL && ctx->rotation_buffer_pixels >= pixels) {
-        return true;
-    }
-    free(ctx->rotation_buffer);
-    ctx->rotation_buffer = heap_caps_malloc(pixels * sizeof(uint16_t),
-                                            MALLOC_CAP_INTERNAL | MALLOC_CAP_DMA | MALLOC_CAP_8BIT);
-    ctx->rotation_buffer_pixels = ctx->rotation_buffer != NULL ? pixels : 0;
-    return ctx->rotation_buffer != NULL;
-}
-
-static esp_err_t qspi_dma_panel_draw_bitmap(esp_lcd_panel_t *panel, int x_start, int y_start,
-                                            int x_end, int y_end, const void *color_data) {
-    qspi_dma_panel_t *ctx = qspi_dma_panel_from_base(panel);
-    if (ctx == NULL || ctx->target == NULL) {
-        return ESP_ERR_INVALID_STATE;
-    }
-
-    const int width = x_end - x_start;
-    const int height = y_end - y_start;
-    if (width <= 0 || height <= 0) {
-        return ESP_ERR_INVALID_ARG;
-    }
-
-    const uint16_t *src = (const uint16_t *)color_data;
-    const size_t max_pixels = (size_t)width * BSP_LCD_DMA_STAGING_ROWS;
-    if (!qspi_dma_panel_ensure_buffer(ctx, max_pixels)) {
-        ESP_LOGE(TAG, "Unable to allocate %" PRIu32 " px DMA staging buffer",
-                 (uint32_t)max_pixels);
-        return ESP_ERR_NO_MEM;
-    }
-
-    for (int y = 0; y < height;) {
-        const int rows = (height - y) > BSP_LCD_DMA_STAGING_ROWS ? BSP_LCD_DMA_STAGING_ROWS : height - y;
-        const size_t pixels = (size_t)width * rows;
-        memcpy(ctx->rotation_buffer, src + ((size_t)y * width), pixels * sizeof(uint16_t));
-        ESP_RETURN_ON_ERROR(esp_lcd_panel_draw_bitmap(ctx->target, x_start, y_start + y, x_end,
-                                                      y_start + y + rows, ctx->rotation_buffer),
-                            TAG, "draw bitmap failed");
-        y += rows;
-    }
-    return ESP_OK;
-}
-
-static esp_err_t qspi_dma_panel_reset(esp_lcd_panel_t *panel) {
-    qspi_dma_panel_t *ctx = qspi_dma_panel_from_base(panel);
-    return ctx && ctx->target ? esp_lcd_panel_reset(ctx->target) : ESP_ERR_INVALID_STATE;
-}
-
-static esp_err_t qspi_dma_panel_init(esp_lcd_panel_t *panel) {
-    qspi_dma_panel_t *ctx = qspi_dma_panel_from_base(panel);
-    return ctx && ctx->target ? esp_lcd_panel_init(ctx->target) : ESP_ERR_INVALID_STATE;
-}
-
-static esp_err_t qspi_dma_panel_del(esp_lcd_panel_t *panel) {
-    qspi_dma_panel_t *ctx = qspi_dma_panel_from_base(panel);
-    if (ctx == NULL || ctx->target == NULL) {
-        return ESP_ERR_INVALID_STATE;
-    }
-    free(ctx->rotation_buffer);
-    ctx->rotation_buffer = NULL;
-    ctx->rotation_buffer_pixels = 0;
-    return esp_lcd_panel_del(ctx->target);
-}
-
-static esp_err_t qspi_dma_panel_mirror(esp_lcd_panel_t *panel, bool x_axis, bool y_axis) {
-    qspi_dma_panel_t *ctx = qspi_dma_panel_from_base(panel);
-    return ctx && ctx->target ? esp_lcd_panel_mirror(ctx->target, x_axis, y_axis)
-                              : ESP_ERR_INVALID_STATE;
-}
-
-static esp_err_t qspi_dma_panel_swap_xy(esp_lcd_panel_t *panel, bool swap_axes) {
-    qspi_dma_panel_t *ctx = qspi_dma_panel_from_base(panel);
-    return ctx && ctx->target ? esp_lcd_panel_swap_xy(ctx->target, swap_axes)
-                              : ESP_ERR_INVALID_STATE;
-}
-
-static esp_err_t qspi_dma_panel_set_gap(esp_lcd_panel_t *panel, int x_gap, int y_gap) {
-    qspi_dma_panel_t *ctx = qspi_dma_panel_from_base(panel);
-    return ctx && ctx->target ? esp_lcd_panel_set_gap(ctx->target, x_gap, y_gap)
-                              : ESP_ERR_INVALID_STATE;
-}
-
-static esp_err_t qspi_dma_panel_invert_color(esp_lcd_panel_t *panel, bool invert_color_data) {
-    qspi_dma_panel_t *ctx = qspi_dma_panel_from_base(panel);
-    return ctx && ctx->target ? esp_lcd_panel_invert_color(ctx->target, invert_color_data)
-                              : ESP_ERR_INVALID_STATE;
-}
-
-static esp_err_t qspi_dma_panel_disp_on_off(esp_lcd_panel_t *panel, bool on_off) {
-    qspi_dma_panel_t *ctx = qspi_dma_panel_from_base(panel);
-    return ctx && ctx->target ? esp_lcd_panel_disp_on_off(ctx->target, on_off)
-                              : ESP_ERR_INVALID_STATE;
-}
-
-static esp_lcd_panel_handle_t qspi_dma_panel_wrap(esp_lcd_panel_handle_t target) {
-    s_dma_panel.base.reset = qspi_dma_panel_reset;
-    s_dma_panel.base.init = qspi_dma_panel_init;
-    s_dma_panel.base.del = qspi_dma_panel_del;
-    s_dma_panel.base.draw_bitmap = qspi_dma_panel_draw_bitmap;
-    s_dma_panel.base.mirror = qspi_dma_panel_mirror;
-    s_dma_panel.base.swap_xy = qspi_dma_panel_swap_xy;
-    s_dma_panel.base.set_gap = qspi_dma_panel_set_gap;
-    s_dma_panel.base.invert_color = qspi_dma_panel_invert_color;
-    s_dma_panel.base.disp_on_off = qspi_dma_panel_disp_on_off;
-    s_dma_panel.base.user_data = &s_dma_panel;
-    s_dma_panel.target = target;
-    return &s_dma_panel.base;
-}
 
 static uint32_t qspi_lcd_cmd(uint8_t cmd) {
     return ((uint32_t)LCD_OPCODE_WRITE_CMD << 24) | ((uint32_t)cmd << 8);
@@ -364,10 +237,8 @@ static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg) {
         return NULL;
     }
 
-    s_adapter_panel_handle = qspi_dma_panel_wrap(s_panel_handle);
-    const bool use_psram = heap_caps_get_total_size(MALLOC_CAP_SPIRAM) > 0;
     esp_lv_adapter_display_config_t disp_cfg = {
-        .panel = s_adapter_panel_handle,
+        .panel = s_panel_handle,
         .panel_io = s_panel_io_handle,
         .profile = {
             .interface = ESP_LV_ADAPTER_PANEL_IF_OTHER,
@@ -375,9 +246,9 @@ static lv_display_t *bsp_display_lcd_init(const bsp_display_cfg_t *cfg) {
             .hor_res = BSP_LCD_H_RES,
             .ver_res = BSP_LCD_V_RES,
             .buffer_height = buffer_height,
-            .use_psram = use_psram,
+            .use_psram = false,
             .enable_ppa_accel = false,
-            .require_double_buffer = use_psram,
+            .require_double_buffer = false,
         },
         .tear_avoid_mode = ESP_LV_ADAPTER_TEAR_AVOID_MODE_NONE,
         .te_sync = ESP_LV_ADAPTER_TE_SYNC_DISABLED(),
