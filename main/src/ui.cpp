@@ -49,18 +49,18 @@ constexpr size_t kImagePersistentReserveBytes = 20U * 1024U;
 constexpr int kDefaultBrightnessPercent = 80;
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
 constexpr int kRingStrokeWidth = 14;
-constexpr int kStatusArcSize = 306;
-constexpr int kRemainingRowY = 112;
-constexpr int kDashboardTextWidth = 220;
-constexpr int kLayerRowWidth = 250;
-constexpr int kStatusLabelY = -46;
-constexpr int kDetailLabelY = 32;
+constexpr int kStatusArcSize = 288;
+constexpr int kRemainingRowY = 104;
+constexpr int kDashboardTextWidth = 200;
+constexpr int kLayerRowWidth = 230;
+constexpr int kStatusLabelY = -58;
+constexpr int kDetailLabelY = 18;
 constexpr int kLayerRowY = 48;
-constexpr int kProgressLabelY = -116;
-constexpr int kBatteryLabelY = -96;
-constexpr int kTempIconX = 96;
-constexpr int kTempValueX = 58;
-constexpr int kTempAuxX = 78;
+constexpr int kProgressLabelY = -104;
+constexpr int kBatteryLabelY = -88;
+constexpr int kTempIconX = 88;
+constexpr int kTempValueX = 52;
+constexpr int kTempAuxX = 70;
 constexpr int kTempRowY = -4;
 constexpr int kAuxTempRowY = 24;
 #else
@@ -3108,7 +3108,11 @@ esp_err_t Ui::build_dashboard() {
   lv_label_set_long_mode(detail_label_, LV_LABEL_LONG_WRAP);
   lv_obj_set_width(detail_label_, kDashboardTextWidth);
   lv_obj_set_style_text_align(detail_label_, LV_TEXT_ALIGN_CENTER, 0);
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_style_text_font(detail_label_, dosis20, 0);
+#else
   lv_obj_set_style_text_font(detail_label_, info20, 0);
+#endif
   lv_obj_set_style_text_color(detail_label_, lv_color_hex(0x94A3B8), 0);
   lv_obj_align(detail_label_, LV_ALIGN_CENTER, 0, kDetailLabelY);
 
@@ -3224,7 +3228,11 @@ esp_err_t Ui::build_dashboard() {
   lv_obj_set_width(portal_hint_label_, kDashboardTextWidth);
   lv_label_set_long_mode(portal_hint_label_, LV_LABEL_LONG_WRAP);
   lv_obj_set_style_text_align(portal_hint_label_, LV_TEXT_ALIGN_CENTER, 0);
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_style_text_font(portal_hint_label_, dosis20, 0);
+#else
   lv_obj_set_style_text_font(portal_hint_label_, info20, 0);
+#endif
   lv_obj_set_style_text_color(portal_hint_label_, lv_color_hex(0x64748B), 0);
   lv_obj_align(portal_hint_label_, LV_ALIGN_CENTER, 0, kDetailLabelY);
   lv_obj_add_flag(portal_hint_label_, LV_OBJ_FLAG_HIDDEN);
