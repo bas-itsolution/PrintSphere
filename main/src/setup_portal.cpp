@@ -670,6 +670,23 @@ CloudPortalPresentation cloud_portal_presentation(const BambuCloudSnapshot& clou
   return presentation;
 }
 
+BambuCloudSnapshot cloud_portal_snapshot_with_saved_credentials(BambuCloudSnapshot snapshot,
+                                                               const BambuCloudCredentials& stored,
+                                                               const std::string& access_token) {
+  if (snapshot.configured || snapshot.setup_stage == CloudSetupStage::kFailed ||
+      (!stored.is_configured() && access_token.empty())) {
+    return snapshot;
+  }
+
+  snapshot.configured = true;
+  snapshot.session_connected = !access_token.empty();
+  snapshot.setup_stage = access_token.empty() ? CloudSetupStage::kLoggingIn
+                                              : CloudSetupStage::kBindingPrinter;
+  snapshot.detail = access_token.empty() ? "Cloud credentials saved. Login is starting."
+                                         : "Cloud session restored. Login is starting.";
+  return snapshot;
+}
+
 bool cloud_login_still_pending(const BambuCloudSnapshot& snapshot) {
   if (!snapshot.configured || cloud_portal_ready(snapshot) || snapshot.verification_required ||
       snapshot.tfa_required) {
@@ -1299,8 +1316,10 @@ esp_err_t SetupPortal::handle_root(httpd_req_t* request) {
   const PrinterProfile active_profile = portal->config_store_.load_active_printer_profile();
   const PrinterConnection printer = active_profile.to_connection();
   const ArcColorScheme arc_colors = portal->config_store_.load_arc_color_scheme();
+  const std::string cloud_access_token = portal->config_store_.load_cloud_access_token();
   const CloudPortalPresentation cloud_portal =
-      cloud_portal_presentation(portal->cloud_client_.refreshed_snapshot());
+      cloud_portal_presentation(cloud_portal_snapshot_with_saved_credentials(
+          portal->cloud_client_.refreshed_snapshot(), cloud, cloud_access_token));
   const BambuCloudSnapshot& cloud_snapshot = cloud_portal.snapshot;
   const PrinterSnapshot local_snapshot = portal->printer_client_.snapshot();
   const auto all_cloud_devices = portal->cloud_client_.get_cloud_devices();
@@ -3232,7 +3251,10 @@ esp_err_t SetupPortal::handle_health(httpd_req_t* request) {
     body += (portal->wifi_manager_.is_station_connected() ? "true" : "false");
     body += ",";
     body += "\"wifi_ip\":\"" + json_escape(portal->wifi_manager_.station_ip()) + "\"";
-    const BambuCloudSnapshot cloud = portal->cloud_client_.refreshed_snapshot();
+    const BambuCloudCredentials cloud_credentials = portal->config_store_.load_cloud_credentials();
+    const std::string cloud_access_token = portal->config_store_.load_cloud_access_token();
+    const BambuCloudSnapshot cloud = cloud_portal_snapshot_with_saved_credentials(
+        portal->cloud_client_.refreshed_snapshot(), cloud_credentials, cloud_access_token);
     const PrinterSnapshot local = portal->printer_client_.snapshot();
     append_cloud_status_fields(&body, cloud);
     append_local_status_fields(&body, local, portal->printer_client_.is_configured());
@@ -3389,7 +3411,8 @@ esp_err_t SetupPortal::handle_config_get(httpd_req_t* request) {
   const PrinterConnection printer = portal->config_store_.load_active_printer_profile().to_connection();
   const ArcColorScheme arc_colors = portal->config_store_.load_arc_color_scheme();
   const BatteryDisplayPolicy bat_policy_get = portal->config_store_.load_battery_display_policy();
-  const BambuCloudSnapshot cloud_snapshot = portal->cloud_client_.snapshot();
+  const BambuCloudSnapshot cloud_snapshot = cloud_portal_snapshot_with_saved_credentials(
+      portal->cloud_client_.snapshot(), cloud, portal->config_store_.load_cloud_access_token());
   const std::string effective_printer_serial = [&]() -> std::string {
     if (!printer.serial.empty()) return printer.serial;
     const auto cloud_devs = portal->cloud_client_.get_cloud_devices();
