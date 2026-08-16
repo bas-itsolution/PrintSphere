@@ -4281,7 +4281,10 @@ esp_err_t SetupPortal::handle_cloud_connect(httpd_req_t* request) {
         "{\"status\":\"saved\",\"detail\":\"Cloud credentials saved. Switch source mode to Hybrid or Cloud only to connect.\",\"cloud_connected\":false,\"cloud_verification_required\":false,\"cloud_tfa_required\":false,\"cloud_configured\":true,\"cloud_detail\":\"Cloud credentials saved. Switch source mode to Hybrid or Cloud only to connect.\",\"cloud_resolved_serial\":\"\"}");
     return ESP_OK;
   }
-  portal->cloud_client_.request_reload_from_store();
+  portal->cloud_client_.configure(cloud,
+                                  portal->config_store_.load_active_printer_profile().serial);
+  portal->cloud_client_.set_network_ready(true);
+  portal->cloud_client_.set_fetch_paused(false);
 
   const BambuCloudSnapshot before = portal->cloud_client_.snapshot();
   BambuCloudSnapshot current = before;

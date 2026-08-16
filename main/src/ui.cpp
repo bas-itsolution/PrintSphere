@@ -49,7 +49,7 @@ constexpr size_t kImagePersistentReserveBytes = 20U * 1024U;
 constexpr int kDefaultBrightnessPercent = 80;
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
 constexpr int kRingStrokeWidth = 12;
-constexpr int kStatusArcSize = 340;
+constexpr int kStatusArcSize = 356;
 constexpr int kRemainingRowY = 106;
 constexpr int kDashboardTextWidth = 188;
 constexpr int kLayerRowWidth = 210;
