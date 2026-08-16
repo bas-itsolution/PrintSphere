@@ -212,6 +212,10 @@ class BambuCloudClient {
   std::vector<CloudDeviceInfo> get_cloud_devices() const;
   // Reconnect-storm telemetry snapshot for the cloud MQTT session.
   MqttTelemetry mqtt_telemetry() const;
+  bool network_ready() const { return network_ready_.load(); }
+  bool fetch_paused() const { return fetch_paused_.load(); }
+  bool live_mqtt_enabled() const { return live_mqtt_enabled_.load(); }
+  bool task_started() const { return task_handle_ != nullptr; }
 
  private:
   enum class AuthMode : uint8_t {

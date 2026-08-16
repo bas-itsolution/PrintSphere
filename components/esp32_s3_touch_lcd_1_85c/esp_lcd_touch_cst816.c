@@ -13,6 +13,7 @@
 static const char *TAG = "cst816";
 
 #define CST816_DATA_REG (0x02)
+#define CST816_GESTURE_REG (0x01)
 #define CST816_CHIP_ID_REG (0xA7)
 #define CST816_AUTOSLEEP_REG (0xFE)
 #define CST816_MAX_POINTS (1)
@@ -114,25 +115,57 @@ err:
 }
 
 static esp_err_t cst816_read_data(esp_lcd_touch_handle_t tp) {
-    typedef struct __attribute__((packed)) {
-        uint8_t num;
-        uint8_t x_h : 4;
-        uint8_t : 4;
-        uint8_t x_l;
-        uint8_t y_h : 4;
-        uint8_t : 4;
-        uint8_t y_l;
-    } cst816_point_t;
+    uint8_t point[5] = {};
+    uint8_t point_num = 0;
+    uint16_t x = 0;
+    uint16_t y = 0;
+    static int log_reads_remaining = 12;
 
-    cst816_point_t point = {};
-    ESP_RETURN_ON_ERROR(cst816_i2c_read(tp, CST816_DATA_REG, (uint8_t *)&point, sizeof(point)), TAG,
+    ESP_RETURN_ON_ERROR(cst816_i2c_read(tp, CST816_DATA_REG, point, sizeof(point)), TAG,
                         "point read failed");
+    point_num = point[0] & 0x0F;
+    if (point_num > 0 && point_num <= CST816_MAX_POINTS) {
+        x = (((uint16_t)point[1] & 0x0F) << 8) | point[2];
+        y = (((uint16_t)point[3] & 0x0F) << 8) | point[4];
+    }
+
+    if (point_num == 0 || point_num > CST816_MAX_POINTS ||
+        x >= tp->config.x_max || y >= tp->config.y_max) {
+        uint8_t alt[6] = {};
+        if (cst816_i2c_read(tp, CST816_GESTURE_REG, alt, sizeof(alt)) == ESP_OK) {
+            const uint8_t alt_num = alt[1] & 0x0F;
+            const uint16_t alt_x = (((uint16_t)alt[2] & 0x0F) << 8) | alt[3];
+            const uint16_t alt_y = (((uint16_t)alt[4] & 0x0F) << 8) | alt[5];
+            if (alt_num > 0 && alt_num <= CST816_MAX_POINTS &&
+                alt_x < tp->config.x_max && alt_y < tp->config.y_max) {
+                point_num = alt_num;
+                x = alt_x;
+                y = alt_y;
+            }
+            if (log_reads_remaining > 0 && (point_num > 0 || alt_num > 0)) {
+                ESP_LOGI(TAG,
+                         "touch raw 02=[%02x %02x %02x %02x %02x] 01=[%02x %02x %02x %02x %02x %02x] -> n=%u x=%u y=%u",
+                         point[0], point[1], point[2], point[3], point[4],
+                         alt[0], alt[1], alt[2], alt[3], alt[4], alt[5],
+                         point_num, x, y);
+                --log_reads_remaining;
+            }
+        }
+    } else if (log_reads_remaining > 0) {
+        ESP_LOGI(TAG, "touch raw 02=[%02x %02x %02x %02x %02x] -> n=%u x=%u y=%u",
+                 point[0], point[1], point[2], point[3], point[4], point_num, x, y);
+        --log_reads_remaining;
+    }
+
+    if (point_num > CST816_MAX_POINTS || x >= tp->config.x_max || y >= tp->config.y_max) {
+        point_num = 0;
+    }
 
     taskENTER_CRITICAL(&tp->data.lock);
-    tp->data.points = point.num > CST816_MAX_POINTS ? CST816_MAX_POINTS : point.num;
+    tp->data.points = point_num;
     if (tp->data.points > 0) {
-        tp->data.coords[0].x = ((uint16_t)point.x_h << 8) | point.x_l;
-        tp->data.coords[0].y = ((uint16_t)point.y_h << 8) | point.y_l;
+        tp->data.coords[0].x = x;
+        tp->data.coords[0].y = y;
         tp->data.coords[0].strength = 1;
     }
     taskEXIT_CRITICAL(&tp->data.lock);

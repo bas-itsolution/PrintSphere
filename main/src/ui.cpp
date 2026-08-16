@@ -50,13 +50,13 @@ constexpr int kDefaultBrightnessPercent = 80;
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
 constexpr int kRingStrokeWidth = 12;
 constexpr int kStatusArcSize = 356;
-constexpr int kRemainingRowY = 106;
+constexpr int kRemainingRowY = 112;
 constexpr int kDashboardTextWidth = 188;
-constexpr int kLayerRowWidth = 210;
-constexpr int kStatusLabelY = -66;
+constexpr int kLayerRowWidth = 230;
+constexpr int kStatusLabelY = -72;
 constexpr int kDetailLabelY = 44;
-constexpr int kLayerRowY = 62;
-constexpr int kProgressLabelY = -104;
+constexpr int kLayerRowY = 58;
+constexpr int kProgressLabelY = -110;
 constexpr int kBatteryLabelY = -88;
 constexpr int kTempIconX = 76;
 constexpr int kTempValueX = 102;
@@ -1031,6 +1031,14 @@ std::string detail_text(const PrinterSnapshot& snapshot) {
       !snapshot.detail.empty() && snapshot.detail != snapshot.stage) {
     return snapshot.detail;
   }
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  const bool has_compact_metrics =
+      snapshot.print_active || snapshot.nozzle_temp_known || snapshot.bed_temp_known ||
+      snapshot.remaining_seconds > 0 || snapshot.current_layer > 0 || snapshot.total_layers > 0;
+  if (has_compact_metrics) {
+    return {};
+  }
+#endif
   if (!snapshot.job_name.empty() &&
       (snapshot.lifecycle == PrintLifecycleState::kPreparing ||
        snapshot.lifecycle == PrintLifecycleState::kPrinting ||
@@ -2151,7 +2159,11 @@ void Ui::apply_snapshot_locked(const PrinterSnapshot& snapshot, bool force_ring_
   // Drive the optional spool icon + grams text alongside the layer counter
   // (siblings inside layer_row_, hidden when no slicer estimate is known).
   const std::string filament = filament_estimate_text(snapshot);
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  const bool has_filament_estimate = false;
+#else
   const bool has_filament_estimate = !filament.empty();
+#endif
   // The spool icon (U+F1097) maps to the wrong glyph in the embedded MDI font
   // (renders as "human-male-board" instead of a spool). Keep it hidden until
   // the font is regenerated with the correct codepoint mapping.
@@ -3063,7 +3075,11 @@ esp_err_t Ui::build_dashboard() {
 
   progress_label_ = lv_label_create(lv_layer_top());
   set_label_text_if_changed(progress_label_, "--%");
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_style_text_font(progress_label_, dosis32, 0);
+#else
   lv_obj_set_style_text_font(progress_label_, dosis40, 0);
+#endif
   lv_obj_set_style_text_color(progress_label_, lv_color_hex(0xFFFFFF), 0);
   lv_obj_align(progress_label_, LV_ALIGN_CENTER, 0, kProgressLabelY);
   apply_display_rotation_visual_offset(progress_label_, display_rotation_);
@@ -3087,12 +3103,20 @@ esp_err_t Ui::build_dashboard() {
 
   badge_slot_ = lv_obj_create(page1_);
   make_transparent(badge_slot_);
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_size(badge_slot_, 54, 54);
+#else
   lv_obj_set_size(badge_slot_, 86, 86);
+#endif
   lv_obj_align(badge_slot_, LV_ALIGN_CENTER, 0, -7);
   lv_obj_clear_flag(badge_slot_, LV_OBJ_FLAG_SCROLLABLE);
 
   logo_badge_ = lv_obj_create(badge_slot_);
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_size(logo_badge_, 60, 60);
+#else
   lv_obj_set_size(logo_badge_, 120, 120);
+#endif
   lv_obj_set_style_radius(logo_badge_, LV_RADIUS_CIRCLE, 0);
   lv_obj_set_style_bg_opa(logo_badge_, LV_OPA_TRANSP, 0);
   lv_obj_set_style_border_opa(logo_badge_, LV_OPA_TRANSP, 0);
@@ -3105,7 +3129,11 @@ esp_err_t Ui::build_dashboard() {
 
   logo_image_ = lv_image_create(logo_badge_);
   lv_image_set_src(logo_image_, &bambuicon_small);
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_image_set_scale(logo_image_, 76);
+#else
   lv_image_set_scale(logo_image_, 183);
+#endif
   lv_image_set_antialias(logo_image_, true);
   lv_obj_set_style_image_recolor_opa(logo_image_, LV_OPA_TRANSP, 0);
   lv_obj_center(logo_image_);
@@ -3114,7 +3142,11 @@ esp_err_t Ui::build_dashboard() {
 
   status_label_ = lv_label_create(page1_);
   set_label_text_if_changed(status_label_, "waiting...");
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_style_text_font(status_label_, dosis20, 0);
+#else
   lv_obj_set_style_text_font(status_label_, dosis32, 0);
+#endif
   lv_obj_set_style_text_color(status_label_, lv_color_hex(0xFFFFFF), 0);
   lv_obj_align(status_label_, LV_ALIGN_CENTER, 0, kStatusLabelY);
 

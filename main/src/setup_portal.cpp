@@ -3257,6 +3257,14 @@ esp_err_t SetupPortal::handle_health(httpd_req_t* request) {
         portal->cloud_client_.refreshed_snapshot(), cloud_credentials, cloud_access_token);
     const PrinterSnapshot local = portal->printer_client_.snapshot();
     append_cloud_status_fields(&body, cloud);
+    body += ",\"cloud_runtime_task_started\":";
+    body += (portal->cloud_client_.task_started() ? "true" : "false");
+    body += ",\"cloud_runtime_network_ready\":";
+    body += (portal->cloud_client_.network_ready() ? "true" : "false");
+    body += ",\"cloud_runtime_fetch_paused\":";
+    body += (portal->cloud_client_.fetch_paused() ? "true" : "false");
+    body += ",\"cloud_runtime_live_mqtt_enabled\":";
+    body += (portal->cloud_client_.live_mqtt_enabled() ? "true" : "false");
     append_local_status_fields(&body, local, portal->printer_client_.is_configured());
     append_mqtt_telemetry_fields(&body, portal->printer_client_.mqtt_telemetry(),
                                  portal->cloud_client_.mqtt_telemetry());
