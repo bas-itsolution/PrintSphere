@@ -9,6 +9,7 @@ set(PROJECT_VER "${PRINTSPHERE_RELEASE_VERSION}")
 set(PRINTSPHERE_HW_VARIANT "lcd_2_8c" CACHE STRING
     "PrintSphere hardware variant: lcd_2_8c, lcd_1_85c, or amoled_1_75")
 set_property(CACHE PRINTSPHERE_HW_VARIANT PROPERTY STRINGS "lcd_2_8c" "lcd_1_85c" "amoled_1_75")
+option(PRINTSPHERE_LCD_DIAGNOSTIC "Build a display-only LCD geometry diagnostic screen" OFF)
 
 if(PRINTSPHERE_HW_VARIANT STREQUAL "lcd_2_8c")
     set(PRINTSPHERE_HW_VARIANT_LABEL "2.8C")

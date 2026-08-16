@@ -84,6 +84,10 @@ target_compile_definitions(${COMPONENT_LIB} PRIVATE
     ${PRINTSPHERE_HW_COMPILE_DEFINE}
 )
 
+if(PRINTSPHERE_LCD_DIAGNOSTIC)
+    target_compile_definitions(${COMPONENT_LIB} PRIVATE PRINTSPHERE_LCD_DIAGNOSTIC=1)
+endif()
+
 if("${PRINTSPHERE_HW_COMPILE_DEFINE}" STREQUAL "PRINTSPHERE_HW_VARIANT_AMOLED_1_75=1")
     idf_component_get_property(PRINTSPHERE_BSP_DIR esp32_s3_touch_amoled_1_75 COMPONENT_DIR)
     idf_component_get_property(PRINTSPHERE_BSP_LIB esp32_s3_touch_amoled_1_75 COMPONENT_LIB)

@@ -1303,6 +1303,100 @@ void card_reveal_opa_exec_cb(void* obj, int32_t val) {
   lv_obj_set_style_opa(static_cast<lv_obj_t*>(obj), static_cast<lv_opa_t>(val), 0);
 }
 
+#if PRINTSPHERE_LCD_DIAGNOSTIC
+lv_obj_t* diagnostic_rect(lv_obj_t* parent, int x, int y, int w, int h, uint32_t color) {
+  lv_obj_t* rect = lv_obj_create(parent);
+  lv_obj_set_size(rect, w, h);
+  lv_obj_set_pos(rect, x, y);
+  lv_obj_set_style_radius(rect, 0, 0);
+  lv_obj_set_style_bg_color(rect, lv_color_hex(color), 0);
+  lv_obj_set_style_bg_opa(rect, LV_OPA_COVER, 0);
+  lv_obj_set_style_border_width(rect, 0, 0);
+  lv_obj_set_style_pad_all(rect, 0, 0);
+  lv_obj_clear_flag(rect, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_clear_flag(rect, LV_OBJ_FLAG_CLICKABLE);
+  return rect;
+}
+
+lv_obj_t* diagnostic_label(lv_obj_t* parent, const char* text, int x, int y, int w,
+                           const lv_font_t* font, uint32_t color,
+                           lv_text_align_t align = LV_TEXT_ALIGN_CENTER) {
+  lv_obj_t* label = lv_label_create(parent);
+  lv_label_set_text(label, text);
+  lv_label_set_long_mode(label, LV_LABEL_LONG_CLIP);
+  lv_obj_set_width(label, w);
+  lv_obj_set_pos(label, x, y);
+  lv_obj_set_style_text_font(label, font, 0);
+  lv_obj_set_style_text_color(label, lv_color_hex(color), 0);
+  lv_obj_set_style_text_align(label, align, 0);
+  return label;
+}
+
+lv_obj_t* diagnostic_circle(lv_obj_t* parent, int diameter, uint32_t color, int width) {
+  lv_obj_t* circle = lv_obj_create(parent);
+  lv_obj_set_size(circle, diameter, diameter);
+  lv_obj_center(circle);
+  lv_obj_set_style_radius(circle, LV_RADIUS_CIRCLE, 0);
+  lv_obj_set_style_bg_opa(circle, LV_OPA_TRANSP, 0);
+  lv_obj_set_style_border_color(circle, lv_color_hex(color), 0);
+  lv_obj_set_style_border_opa(circle, LV_OPA_COVER, 0);
+  lv_obj_set_style_border_width(circle, width, 0);
+  lv_obj_set_style_pad_all(circle, 0, 0);
+  lv_obj_clear_flag(circle, LV_OBJ_FLAG_SCROLLABLE);
+  lv_obj_clear_flag(circle, LV_OBJ_FLAG_CLICKABLE);
+  return circle;
+}
+
+void build_lcd_diagnostic_screen(lv_obj_t* screen) {
+  lv_obj_clean(screen);
+  lv_obj_set_style_bg_color(screen, lv_color_hex(0x000000), 0);
+  lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
+
+  constexpr int width = board::kDisplayWidth;
+  constexpr int height = board::kDisplayHeight;
+  constexpr int center_x = width / 2;
+  constexpr int center_y = height / 2;
+
+  for (int x = 0; x <= width; x += 30) {
+    diagnostic_rect(screen, x, 0, x == center_x ? 3 : 1, height,
+                    x == center_x ? 0xFFFFFF : 0x263241);
+  }
+  for (int y = 0; y <= height; y += 30) {
+    diagnostic_rect(screen, 0, y, width, y == center_y ? 3 : 1,
+                    y == center_y ? 0xFFFFFF : 0x263241);
+  }
+
+  diagnostic_rect(screen, 0, 0, width, 7, 0xFF3030);           // top: red
+  diagnostic_rect(screen, width - 7, 0, 7, height, 0x30FF30);  // right: green
+  diagnostic_rect(screen, 0, height - 7, width, 7, 0x306DFF);  // bottom: blue
+  diagnostic_rect(screen, 0, 0, 7, height, 0xFFFFFF);          // left: white
+
+  diagnostic_circle(screen, 340, 0xFFB000, 2);
+  diagnostic_circle(screen, 306, 0x00D6FF, 2);
+  diagnostic_circle(screen, 240, 0x666666, 1);
+  diagnostic_circle(screen, 120, 0x666666, 1);
+
+  diagnostic_rect(screen, center_x - 26, center_y - 2, 52, 4, 0xFFFFFF);
+  diagnostic_rect(screen, center_x - 2, center_y - 26, 4, 52, 0xFFFFFF);
+  diagnostic_rect(screen, center_x - 4, center_y - 4, 8, 8, 0xFF00FF);
+
+  diagnostic_label(screen, "TOP RED", 120, 13, 120, &dosis_20, 0xFFB0B0);
+  diagnostic_label(screen, "LEFT", 18, 166, 70, &dosis_20, 0xFFFFFF, LV_TEXT_ALIGN_LEFT);
+  diagnostic_label(screen, "RIGHT", 272, 166, 70, &dosis_20, 0x88FF88, LV_TEXT_ALIGN_RIGHT);
+  diagnostic_label(screen, "BOTTOM BLUE", 100, 324, 160, &dosis_20, 0x91B8FF);
+
+  diagnostic_label(screen, "TL", 50, 46, 50, &dosis_20, 0xFFFFFF);
+  diagnostic_label(screen, "TR", 260, 46, 50, &dosis_20, 0xFFFFFF);
+  diagnostic_label(screen, "BL", 50, 292, 50, &dosis_20, 0xFFFFFF);
+  diagnostic_label(screen, "BR", 260, 292, 50, &dosis_20, 0xFFFFFF);
+
+  diagnostic_label(screen, "LCD 1.85C", 90, 125, 180, &dosis_32, 0xFFD166);
+  diagnostic_label(screen, "CENTER 180,180", 75, 190, 210, &dosis_20, 0xFFFFFF);
+  diagnostic_label(screen, "30px grid / 340 amber / 306 cyan", 46, 221, 268,
+                   &dosis_20, 0x94A3B8);
+}
+#endif
+
 }  // namespace
 
 void Ui::set_display_rotation(DisplayRotation rotation) {
@@ -1790,6 +1884,10 @@ void Ui::apply_snapshot(const PrinterSnapshot& snapshot) {
   if (!initialized_) {
     return;
   }
+#if PRINTSPHERE_LCD_DIAGNOSTIC
+  last_snapshot_ = snapshot;
+  return;
+#endif
   if (scrolling_) {
     last_snapshot_ = snapshot;
     deferred_snapshot_ = snapshot;
@@ -2825,6 +2923,12 @@ esp_err_t Ui::build_dashboard() {
   screen_ = lv_screen_active();
   lv_obj_set_style_bg_color(screen_, lv_color_hex(0x000000), 0);
   lv_obj_set_style_bg_opa(screen_, LV_OPA_COVER, 0);
+
+#if PRINTSPHERE_LCD_DIAGNOSTIC
+  build_lcd_diagnostic_screen(screen_);
+  ESP_LOGW(kTag, "LCD diagnostic screen enabled; normal PrintSphere UI is not rendered");
+  return ESP_OK;
+#endif
 
   const lv_font_t* dosis20 = &dosis_20;
   const lv_font_t* dosis32 = &dosis_32;
