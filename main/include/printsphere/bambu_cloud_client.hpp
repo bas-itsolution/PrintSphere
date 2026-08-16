@@ -170,7 +170,12 @@ class BambuCloudClient {
 
   void set_config_store(const ConfigStore* config_store) { config_store_ = config_store; }
   void configure(BambuCloudCredentials credentials, std::string printer_serial);
-  void set_network_ready(bool ready) { network_ready_.store(ready); }
+  void set_network_ready(bool ready) {
+    const bool previous = network_ready_.exchange(ready);
+    if (ready && !previous && task_handle_ != nullptr) {
+      xTaskNotifyGive(task_handle_);
+    }
+  }
   // Invoked whenever a `client.connected` / `client.disconnected` event for the
   // currently-bound printer arrives on the Bambu Cloud MQTT feed. Used by the
   // local PrinterClient to reconnect immediately when the printer comes back

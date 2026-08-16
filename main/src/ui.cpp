@@ -48,21 +48,21 @@ constexpr char kTag[] = "printsphere.ui";
 constexpr size_t kImagePersistentReserveBytes = 20U * 1024U;
 constexpr int kDefaultBrightnessPercent = 80;
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
-constexpr int kRingStrokeWidth = 14;
-constexpr int kStatusArcSize = 288;
-constexpr int kRemainingRowY = 104;
-constexpr int kDashboardTextWidth = 200;
-constexpr int kLayerRowWidth = 230;
-constexpr int kStatusLabelY = -58;
-constexpr int kDetailLabelY = 18;
-constexpr int kLayerRowY = 48;
+constexpr int kRingStrokeWidth = 12;
+constexpr int kStatusArcSize = 340;
+constexpr int kRemainingRowY = 106;
+constexpr int kDashboardTextWidth = 188;
+constexpr int kLayerRowWidth = 210;
+constexpr int kStatusLabelY = -66;
+constexpr int kDetailLabelY = -14;
+constexpr int kLayerRowY = 62;
 constexpr int kProgressLabelY = -104;
 constexpr int kBatteryLabelY = -88;
-constexpr int kTempIconX = 88;
-constexpr int kTempValueX = 52;
-constexpr int kTempAuxX = 70;
-constexpr int kTempRowY = -4;
-constexpr int kAuxTempRowY = 24;
+constexpr int kTempIconX = 76;
+constexpr int kTempValueX = 42;
+constexpr int kTempAuxX = 58;
+constexpr int kTempRowY = 28;
+constexpr int kAuxTempRowY = 50;
 #else
 constexpr int kRingStrokeWidth = 22;
 constexpr int kStatusArcSize = board::kDisplayWidth;
@@ -3138,7 +3138,11 @@ esp_err_t Ui::build_dashboard() {
 
   layer_label_ = lv_label_create(layer_row_);
   set_label_text_if_changed(layer_label_, "Layer: -- / --");
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_style_text_font(layer_label_, dosis20, 0);
+#else
   lv_obj_set_style_text_font(layer_label_, dosis32, 0);
+#endif
   lv_obj_set_style_text_color(layer_label_, lv_color_hex(0xDDDDDD), 0);
 
   // Filament estimate (icon + grams) appears on the right of the layer row
@@ -3165,13 +3169,21 @@ esp_err_t Ui::build_dashboard() {
 
   nozzle_prefix_label_ = lv_label_create(page1_);
   set_label_text_if_changed(nozzle_prefix_label_, kMdiNozzle);
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_style_text_font(nozzle_prefix_label_, mdi30, 0);
+#else
   lv_obj_set_style_text_font(nozzle_prefix_label_, mdi40, 0);
+#endif
   lv_obj_set_style_text_color(nozzle_prefix_label_, lv_color_hex(0xFFFFFF), 0);
   lv_obj_align(nozzle_prefix_label_, LV_ALIGN_CENTER, -kTempIconX, kTempRowY);
 
   nozzle_value_label_ = lv_label_create(page1_);
   set_label_text_if_changed(nozzle_value_label_, "--°C");
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_style_text_font(nozzle_value_label_, dosis20, 0);
+#else
   lv_obj_set_style_text_font(nozzle_value_label_, dosis32, 0);
+#endif
   lv_obj_set_style_text_color(nozzle_value_label_, lv_color_hex(0xFFFFFF), 0);
   lv_obj_align(nozzle_value_label_, LV_ALIGN_CENTER, -kTempValueX, kTempRowY);
   set_label_text_if_changed(nozzle_value_label_, std::string("--") + kDegreeC);
@@ -3188,13 +3200,21 @@ esp_err_t Ui::build_dashboard() {
 
   bed_prefix_label_ = lv_label_create(page1_);
   set_label_text_if_changed(bed_prefix_label_, kMdiBed);
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_style_text_font(bed_prefix_label_, mdi30, 0);
+#else
   lv_obj_set_style_text_font(bed_prefix_label_, mdi40, 0);
+#endif
   lv_obj_set_style_text_color(bed_prefix_label_, lv_color_hex(0xFFFFFF), 0);
   lv_obj_align(bed_prefix_label_, LV_ALIGN_CENTER, kTempIconX, kTempRowY);
 
   bed_value_label_ = lv_label_create(page1_);
   set_label_text_if_changed(bed_value_label_, "--°C");
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_style_text_font(bed_value_label_, dosis20, 0);
+#else
   lv_obj_set_style_text_font(bed_value_label_, dosis32, 0);
+#endif
   lv_obj_set_style_text_color(bed_value_label_, lv_color_hex(0xFFFFFF), 0);
   lv_obj_set_width(bed_value_label_, 96);
   lv_obj_set_style_text_align(bed_value_label_, LV_TEXT_ALIGN_RIGHT, 0);
@@ -3225,13 +3245,21 @@ esp_err_t Ui::build_dashboard() {
 
   remaining_prefix_label_ = lv_label_create(remaining_row_);
   set_label_text_if_changed(remaining_prefix_label_, kMdiClock);
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_style_text_font(remaining_prefix_label_, mdi30, 0);
+#else
   lv_obj_set_style_text_font(remaining_prefix_label_, mdi40, 0);
+#endif
   lv_obj_set_style_text_color(remaining_prefix_label_, lv_color_hex(0x87CEEB), 0);
   lv_obj_set_style_pad_right(remaining_prefix_label_, 8, 0);
 
   remaining_label_ = lv_label_create(remaining_row_);
   set_label_text_if_changed(remaining_label_, "--m");
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  lv_obj_set_style_text_font(remaining_label_, dosis32, 0);
+#else
   lv_obj_set_style_text_font(remaining_label_, dosis40, 0);
+#endif
   lv_obj_set_style_text_color(remaining_label_, lv_color_hex(0x87CEEB), 0);
 
   portal_hint_label_ = lv_label_create(page1_);
@@ -3440,8 +3468,18 @@ void Ui::apply_page_visibility() {
   const bool settled_page1 = !scrolling_ && active_page_ == kPageIdxMain;
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
   const bool compact_setup = on_page1 && is_setup_access_snapshot(last_snapshot_);
+  const bool dashboard_metrics_visible =
+      !compact_setup && on_page1 &&
+      (last_snapshot_.connection == PrinterConnectionState::kOnline ||
+       last_snapshot_.print_active ||
+       last_snapshot_.nozzle_temp_known ||
+       last_snapshot_.bed_temp_known ||
+       last_snapshot_.remaining_seconds > 0 ||
+       last_snapshot_.current_layer > 0 ||
+       last_snapshot_.total_layers > 0);
 #else
   constexpr bool compact_setup = false;
+  const bool dashboard_metrics_visible = on_page1;
 #endif
   // These labels live on lv_layer_top(), so the pager cannot clip them.  The
   // camera header uses the same position: on battery power (including while
@@ -3465,16 +3503,16 @@ void Ui::apply_page_visibility() {
   set_hidden(status_label_, !on_page1);
   set_hidden(detail_label_, !on_page1 || !detail_visible_ || show_portal_hint);
   set_hidden(progress_label_, compact_setup);
-  set_hidden(layer_row_, compact_setup || !on_page1);
+  set_hidden(layer_row_, !dashboard_metrics_visible);
   set_hidden(battery_icon_label_, !show_battery_overlay);
   set_hidden(battery_pct_label_, !show_battery_overlay);
-  set_hidden(nozzle_prefix_label_, compact_setup || !on_page1);
-  set_hidden(nozzle_value_label_, compact_setup || !on_page1);
-  set_hidden(nozzle_aux_label_, compact_setup || !on_page1 || !nozzle_aux_visible_);
-  set_hidden(bed_prefix_label_, compact_setup || !on_page1);
-  set_hidden(bed_value_label_, compact_setup || !on_page1);
-  set_hidden(bed_aux_label_, compact_setup || !on_page1 || !bed_aux_visible_);
-  set_hidden(remaining_row_, compact_setup || !on_page1);
+  set_hidden(nozzle_prefix_label_, !dashboard_metrics_visible);
+  set_hidden(nozzle_value_label_, !dashboard_metrics_visible);
+  set_hidden(nozzle_aux_label_, !dashboard_metrics_visible || !nozzle_aux_visible_);
+  set_hidden(bed_prefix_label_, !dashboard_metrics_visible);
+  set_hidden(bed_value_label_, !dashboard_metrics_visible);
+  set_hidden(bed_aux_label_, !dashboard_metrics_visible || !bed_aux_visible_);
+  set_hidden(remaining_row_, !dashboard_metrics_visible);
   set_hidden(badge_slot_, compact_setup || !on_page1);
   set_hidden(portal_hint_label_, !show_portal_hint);
   set_hidden(page2_image_, !on_page2 || !preview_image_visible_);
