@@ -85,13 +85,16 @@
         <esp-web-install-button id="install-button">
           <button slot="activate">Install LCD 1.85C firmware</button>
         </esp-web-install-button>
-        <p>Файл: <code>release/1.85c/initial/printsphere_full.bin</code></p>
+        <p>Файл: <code>release/1.85c/initial/printsphere_full-touch-fallback.bin</code></p>
         <p>SHA256: <code>942A90D257AF318824DB427F9AFF1E22CB1CEF5EB77594E9ABF3BD9A08253D3B</code></p>
       </section>
     </main>
 
     <script>
-      const imageUrl = new URL("../release/1.85c/initial/printsphere_full.bin", window.location.href).href;
+      const imageUrl = new URL(
+        "../release/1.85c/initial/printsphere_full-touch-fallback.bin?v=cf599c1",
+        window.location.href,
+      ).href;
       const manifest = {
         name: "PrintSphere LCD 1.85C Rev2.0",
         version: "v1.6.2-1.85C",
