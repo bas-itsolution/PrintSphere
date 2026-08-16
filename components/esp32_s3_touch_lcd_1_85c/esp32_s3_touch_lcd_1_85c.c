@@ -490,6 +490,9 @@ esp_err_t bsp_display_rotation_set(bsp_display_rotation_t rotation) {
     if (s_display == NULL || s_panel_io_handle == NULL) {
         return ESP_OK;
     }
+    if (rotation == BSP_DISPLAY_ROTATE_0) {
+        return ESP_OK;
+    }
 
     uint8_t madctl = 0x00;
     switch (rotation) {
