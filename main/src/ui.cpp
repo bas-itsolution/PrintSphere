@@ -47,8 +47,39 @@ namespace {
 constexpr char kTag[] = "printsphere.ui";
 constexpr size_t kImagePersistentReserveBytes = 20U * 1024U;
 constexpr int kDefaultBrightnessPercent = 80;
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+constexpr int kRingStrokeWidth = 16;
+constexpr int kStatusArcSize = 318;
+constexpr int kRemainingRowY = 126;
+constexpr int kDashboardTextWidth = 260;
+constexpr int kLayerRowWidth = 300;
+constexpr int kStatusLabelY = -72;
+constexpr int kDetailLabelY = 88;
+constexpr int kLayerRowY = 44;
+constexpr int kProgressLabelY = -134;
+constexpr int kBatteryLabelY = -106;
+constexpr int kTempIconX = 112;
+constexpr int kTempValueX = 72;
+constexpr int kTempAuxX = 92;
+constexpr int kTempRowY = -4;
+constexpr int kAuxTempRowY = 24;
+#else
 constexpr int kRingStrokeWidth = 22;
+constexpr int kStatusArcSize = board::kDisplayWidth;
 constexpr int kRemainingRowY = 172;
+constexpr int kDashboardTextWidth = 320;
+constexpr int kLayerRowWidth = 360;
+constexpr int kStatusLabelY = -86;
+constexpr int kDetailLabelY = 114;
+constexpr int kLayerRowY = 70;
+constexpr int kProgressLabelY = -178;
+constexpr int kBatteryLabelY = -140;
+constexpr int kTempIconX = 182;
+constexpr int kTempValueX = 132;
+constexpr int kTempAuxX = 132;
+constexpr int kTempRowY = -10;
+constexpr int kAuxTempRowY = 28;
+#endif
 // Page-2 preview cover layout. The compact layout (240 px cover, lifted up
 // to make room for two print-control buttons below) is only used when the
 // experimental print-control buttons are compiled in. The default build keeps
@@ -74,7 +105,6 @@ constexpr int kPage3SubnoteWithImageY = 182;
 // Image is 224 high and centered at y=0, so its top is ~y=-112; the
 // status sits above with comfortable breathing room.
 constexpr int kPage3StatusAboveImageY = -138;
-constexpr int kAuxTempRowY = 28;
 constexpr int kSwipeThresholdPx = 24;
 constexpr int kGestureAxisLockMarginPx = 16;
 constexpr int kBrightnessHorizontalTolerancePx = 18;
@@ -2878,7 +2908,7 @@ esp_err_t Ui::build_dashboard() {
   lv_obj_move_foreground(fixed_overlay_);
 
   status_arc_ = lv_arc_create(fixed_overlay_);
-  lv_obj_set_size(status_arc_, board::kDisplayWidth, board::kDisplayHeight);
+  lv_obj_set_size(status_arc_, kStatusArcSize, kStatusArcSize);
   lv_obj_remove_flag(status_arc_, LV_OBJ_FLAG_CLICKABLE);
   lv_arc_set_rotation(status_arc_, 270);
   lv_arc_set_bg_angles(status_arc_, 0, 360);
@@ -2899,7 +2929,7 @@ esp_err_t Ui::build_dashboard() {
   set_label_text_if_changed(progress_label_, "--%");
   lv_obj_set_style_text_font(progress_label_, dosis40, 0);
   lv_obj_set_style_text_color(progress_label_, lv_color_hex(0xFFFFFF), 0);
-  lv_obj_align(progress_label_, LV_ALIGN_CENTER, 0, -178);
+  lv_obj_align(progress_label_, LV_ALIGN_CENTER, 0, kProgressLabelY);
   apply_display_rotation_visual_offset(progress_label_, display_rotation_);
   lv_obj_move_foreground(progress_label_);
 
@@ -2907,7 +2937,7 @@ esp_err_t Ui::build_dashboard() {
   set_label_text_if_changed(battery_icon_label_, kMdiBattery100);
   lv_obj_set_style_text_font(battery_icon_label_, mdi30, 0);
   lv_obj_set_style_text_color(battery_icon_label_, lv_color_hex(0xFFFFFF), 0);
-  lv_obj_align(battery_icon_label_, LV_ALIGN_CENTER, -20, -140);
+  lv_obj_align(battery_icon_label_, LV_ALIGN_CENTER, -20, kBatteryLabelY);
   apply_display_rotation_visual_offset(battery_icon_label_, display_rotation_);
   lv_obj_move_foreground(battery_icon_label_);
 
@@ -2915,7 +2945,7 @@ esp_err_t Ui::build_dashboard() {
   set_label_text_if_changed(battery_pct_label_, "--%");
   lv_obj_set_style_text_font(battery_pct_label_, dosis20, 0);
   lv_obj_set_style_text_color(battery_pct_label_, lv_color_hex(0xFFFFFF), 0);
-  lv_obj_align(battery_pct_label_, LV_ALIGN_CENTER, 20, -140);
+  lv_obj_align(battery_pct_label_, LV_ALIGN_CENTER, 20, kBatteryLabelY);
   apply_display_rotation_visual_offset(battery_pct_label_, display_rotation_);
   lv_obj_move_foreground(battery_pct_label_);
 
@@ -2950,24 +2980,24 @@ esp_err_t Ui::build_dashboard() {
   set_label_text_if_changed(status_label_, "waiting...");
   lv_obj_set_style_text_font(status_label_, dosis32, 0);
   lv_obj_set_style_text_color(status_label_, lv_color_hex(0xFFFFFF), 0);
-  lv_obj_align(status_label_, LV_ALIGN_CENTER, 0, -86);
+  lv_obj_align(status_label_, LV_ALIGN_CENTER, 0, kStatusLabelY);
 
   detail_label_ = lv_label_create(page1_);
   set_label_text_if_changed(detail_label_, "Waiting for printer data");
   lv_label_set_long_mode(detail_label_, LV_LABEL_LONG_WRAP);
-  lv_obj_set_width(detail_label_, 320);
+  lv_obj_set_width(detail_label_, kDashboardTextWidth);
   lv_obj_set_style_text_align(detail_label_, LV_TEXT_ALIGN_CENTER, 0);
   lv_obj_set_style_text_font(detail_label_, info20, 0);
   lv_obj_set_style_text_color(detail_label_, lv_color_hex(0x94A3B8), 0);
-  lv_obj_align(detail_label_, LV_ALIGN_CENTER, 0, 114);
+  lv_obj_align(detail_label_, LV_ALIGN_CENTER, 0, kDetailLabelY);
 
   layer_row_ = lv_obj_create(page1_);
   make_transparent(layer_row_);
-  lv_obj_set_size(layer_row_, 360, LV_SIZE_CONTENT);
+  lv_obj_set_size(layer_row_, kLayerRowWidth, LV_SIZE_CONTENT);
   lv_obj_set_flex_flow(layer_row_, LV_FLEX_FLOW_ROW);
   lv_obj_set_flex_align(layer_row_, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER,
                         LV_FLEX_ALIGN_CENTER);
-  lv_obj_align(layer_row_, LV_ALIGN_CENTER, 0, 70);
+  lv_obj_align(layer_row_, LV_ALIGN_CENTER, 0, kLayerRowY);
   lv_obj_clear_flag(layer_row_, LV_OBJ_FLAG_SCROLLABLE);
 
   layer_label_ = lv_label_create(layer_row_);
@@ -3001,13 +3031,13 @@ esp_err_t Ui::build_dashboard() {
   set_label_text_if_changed(nozzle_prefix_label_, kMdiNozzle);
   lv_obj_set_style_text_font(nozzle_prefix_label_, mdi40, 0);
   lv_obj_set_style_text_color(nozzle_prefix_label_, lv_color_hex(0xFFFFFF), 0);
-  lv_obj_align(nozzle_prefix_label_, LV_ALIGN_CENTER, -182, -10);
+  lv_obj_align(nozzle_prefix_label_, LV_ALIGN_CENTER, -kTempIconX, kTempRowY);
 
   nozzle_value_label_ = lv_label_create(page1_);
   set_label_text_if_changed(nozzle_value_label_, "--°C");
   lv_obj_set_style_text_font(nozzle_value_label_, dosis32, 0);
   lv_obj_set_style_text_color(nozzle_value_label_, lv_color_hex(0xFFFFFF), 0);
-  lv_obj_align(nozzle_value_label_, LV_ALIGN_CENTER, -132, -10);
+  lv_obj_align(nozzle_value_label_, LV_ALIGN_CENTER, -kTempValueX, kTempRowY);
   set_label_text_if_changed(nozzle_value_label_, std::string("--") + kDegreeC);
 
   nozzle_aux_label_ = lv_label_create(page1_);
@@ -3017,14 +3047,14 @@ esp_err_t Ui::build_dashboard() {
   lv_obj_set_style_text_align(nozzle_aux_label_, LV_TEXT_ALIGN_CENTER, 0);
   lv_obj_set_style_text_font(nozzle_aux_label_, dosis20, 0);
   lv_obj_set_style_text_color(nozzle_aux_label_, lv_color_hex(0x94A3B8), 0);
-  lv_obj_align(nozzle_aux_label_, LV_ALIGN_CENTER, -132, kAuxTempRowY);
+  lv_obj_align(nozzle_aux_label_, LV_ALIGN_CENTER, -kTempAuxX, kAuxTempRowY);
   lv_obj_add_flag(nozzle_aux_label_, LV_OBJ_FLAG_HIDDEN);
 
   bed_prefix_label_ = lv_label_create(page1_);
   set_label_text_if_changed(bed_prefix_label_, kMdiBed);
   lv_obj_set_style_text_font(bed_prefix_label_, mdi40, 0);
   lv_obj_set_style_text_color(bed_prefix_label_, lv_color_hex(0xFFFFFF), 0);
-  lv_obj_align(bed_prefix_label_, LV_ALIGN_CENTER, 182, -10);
+  lv_obj_align(bed_prefix_label_, LV_ALIGN_CENTER, kTempIconX, kTempRowY);
 
   bed_value_label_ = lv_label_create(page1_);
   set_label_text_if_changed(bed_value_label_, "--°C");
@@ -3032,7 +3062,7 @@ esp_err_t Ui::build_dashboard() {
   lv_obj_set_style_text_color(bed_value_label_, lv_color_hex(0xFFFFFF), 0);
   lv_obj_set_width(bed_value_label_, 96);
   lv_obj_set_style_text_align(bed_value_label_, LV_TEXT_ALIGN_RIGHT, 0);
-  lv_obj_align(bed_value_label_, LV_ALIGN_CENTER, 108, -10);
+  lv_obj_align(bed_value_label_, LV_ALIGN_CENTER, kTempValueX, kTempRowY);
   set_label_text_if_changed(bed_value_label_, std::string("--") + kDegreeC);
 
   bed_aux_label_ = lv_label_create(page1_);
@@ -3042,7 +3072,7 @@ esp_err_t Ui::build_dashboard() {
   lv_obj_set_style_text_align(bed_aux_label_, LV_TEXT_ALIGN_CENTER, 0);
   lv_obj_set_style_text_font(bed_aux_label_, dosis20, 0);
   lv_obj_set_style_text_color(bed_aux_label_, lv_color_hex(0x94A3B8), 0);
-  lv_obj_align(bed_aux_label_, LV_ALIGN_CENTER, 132, kAuxTempRowY);
+  lv_obj_align(bed_aux_label_, LV_ALIGN_CENTER, kTempAuxX, kAuxTempRowY);
   lv_obj_add_flag(bed_aux_label_, LV_OBJ_FLAG_HIDDEN);
 
   remaining_row_ = lv_obj_create(page1_);
@@ -3070,12 +3100,12 @@ esp_err_t Ui::build_dashboard() {
 
   portal_hint_label_ = lv_label_create(page1_);
   set_label_text_if_changed(portal_hint_label_, "");
-  lv_obj_set_width(portal_hint_label_, 320);
+  lv_obj_set_width(portal_hint_label_, kDashboardTextWidth);
   lv_label_set_long_mode(portal_hint_label_, LV_LABEL_LONG_WRAP);
   lv_obj_set_style_text_align(portal_hint_label_, LV_TEXT_ALIGN_CENTER, 0);
   lv_obj_set_style_text_font(portal_hint_label_, info20, 0);
   lv_obj_set_style_text_color(portal_hint_label_, lv_color_hex(0x64748B), 0);
-  lv_obj_align(portal_hint_label_, LV_ALIGN_CENTER, 0, 114);
+  lv_obj_align(portal_hint_label_, LV_ALIGN_CENTER, 0, kDetailLabelY);
   lv_obj_add_flag(portal_hint_label_, LV_OBJ_FLAG_HIDDEN);
 
   brightness_overlay_ = lv_label_create(lv_layer_top());
