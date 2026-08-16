@@ -521,6 +521,9 @@ void Application::run() {
     const bool cloud_network_ready = wifi_connected && source_mode_ != SourceMode::kLocalOnly;
     const bool hybrid_cloud_idle =
         source_mode_ == SourceMode::kHybrid && hybrid_local_path_healthy && !preview_page_active;
+    const bool cloud_login_pending =
+        cloud_snapshot.configured && !cloud_snapshot.session_connected &&
+        !cloud_snapshot.verification_required && !cloud_snapshot.tfa_required;
     const bool cloud_live_mqtt_enabled =
         cloud_network_ready &&
         !local_mqtt_handoff_active &&
@@ -529,6 +532,7 @@ void Application::run() {
           (hybrid_prefers_cloud || !hybrid_local_path_healthy)));
     const bool pause_cloud_fetches =
         source_mode_ == SourceMode::kHybrid &&
+        !cloud_login_pending &&
         (hybrid_cloud_idle ||
          (hybrid_local_gate_open_ &&
           (camera_page_active || page_transition_active || hybrid_camera_cooldown_active)) ||

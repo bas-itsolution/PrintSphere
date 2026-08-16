@@ -3403,7 +3403,6 @@ void BambuCloudClient::task_loop() {
       last_binding_fetch_tick = 0;
       cloud_initial_sync_failures = 0;
       cloud_mqtt_restart_not_before_tick = 0;
-      continue;
     }
 
     if (reload_requested_.exchange(false) && config_store_ != nullptr) {

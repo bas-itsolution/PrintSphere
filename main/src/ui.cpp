@@ -54,14 +54,14 @@ constexpr int kRemainingRowY = 106;
 constexpr int kDashboardTextWidth = 188;
 constexpr int kLayerRowWidth = 210;
 constexpr int kStatusLabelY = -66;
-constexpr int kDetailLabelY = -14;
+constexpr int kDetailLabelY = 44;
 constexpr int kLayerRowY = 62;
 constexpr int kProgressLabelY = -104;
 constexpr int kBatteryLabelY = -88;
 constexpr int kTempIconX = 76;
-constexpr int kTempValueX = 42;
+constexpr int kTempValueX = 102;
 constexpr int kTempAuxX = 58;
-constexpr int kTempRowY = 28;
+constexpr int kTempRowY = -8;
 constexpr int kAuxTempRowY = 50;
 #else
 constexpr int kRingStrokeWidth = 22;
@@ -2165,7 +2165,11 @@ void Ui::apply_snapshot_locked(const PrinterSnapshot& snapshot, bool force_ring_
   set_label_text_if_changed(remaining_label_, remaining);
   // Hide the clock-icon prefix in ETA mode — leaves more room for "HH:MM"
   // and avoids the redundant clock-glyph + clock-time stutter.
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  set_hidden(remaining_prefix_label_, true);
+#else
   set_hidden(remaining_prefix_label_, show_eta_);
+#endif
 
   LvglLockGuard::note_phase("temps");
   char temp_buffer[24] = {};
@@ -3181,6 +3185,8 @@ esp_err_t Ui::build_dashboard() {
   set_label_text_if_changed(nozzle_value_label_, "--°C");
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
   lv_obj_set_style_text_font(nozzle_value_label_, dosis20, 0);
+  lv_obj_set_width(nozzle_value_label_, 74);
+  lv_obj_set_style_text_align(nozzle_value_label_, LV_TEXT_ALIGN_LEFT, 0);
 #else
   lv_obj_set_style_text_font(nozzle_value_label_, dosis32, 0);
 #endif
@@ -3212,12 +3218,15 @@ esp_err_t Ui::build_dashboard() {
   set_label_text_if_changed(bed_value_label_, "--°C");
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
   lv_obj_set_style_text_font(bed_value_label_, dosis20, 0);
+  lv_obj_set_width(bed_value_label_, 74);
+  lv_obj_set_style_text_align(bed_value_label_, LV_TEXT_ALIGN_RIGHT, 0);
 #else
   lv_obj_set_style_text_font(bed_value_label_, dosis32, 0);
-#endif
   lv_obj_set_style_text_color(bed_value_label_, lv_color_hex(0xFFFFFF), 0);
   lv_obj_set_width(bed_value_label_, 96);
   lv_obj_set_style_text_align(bed_value_label_, LV_TEXT_ALIGN_RIGHT, 0);
+#endif
+  lv_obj_set_style_text_color(bed_value_label_, lv_color_hex(0xFFFFFF), 0);
   lv_obj_align(bed_value_label_, LV_ALIGN_CENTER, kTempValueX, kTempRowY);
   set_label_text_if_changed(bed_value_label_, std::string("--") + kDegreeC);
 
@@ -3247,6 +3256,7 @@ esp_err_t Ui::build_dashboard() {
   set_label_text_if_changed(remaining_prefix_label_, kMdiClock);
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
   lv_obj_set_style_text_font(remaining_prefix_label_, mdi30, 0);
+  lv_obj_add_flag(remaining_prefix_label_, LV_OBJ_FLAG_HIDDEN);
 #else
   lv_obj_set_style_text_font(remaining_prefix_label_, mdi40, 0);
 #endif
@@ -3468,6 +3478,7 @@ void Ui::apply_page_visibility() {
   const bool settled_page1 = !scrolling_ && active_page_ == kPageIdxMain;
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
   const bool compact_setup = on_page1 && is_setup_access_snapshot(last_snapshot_);
+  constexpr bool show_metric_icons = false;
   const bool dashboard_metrics_visible =
       !compact_setup && on_page1 &&
       (last_snapshot_.connection == PrinterConnectionState::kOnline ||
@@ -3479,6 +3490,7 @@ void Ui::apply_page_visibility() {
        last_snapshot_.total_layers > 0);
 #else
   constexpr bool compact_setup = false;
+  constexpr bool show_metric_icons = true;
   const bool dashboard_metrics_visible = on_page1;
 #endif
   // These labels live on lv_layer_top(), so the pager cannot clip them.  The
@@ -3506,10 +3518,10 @@ void Ui::apply_page_visibility() {
   set_hidden(layer_row_, !dashboard_metrics_visible);
   set_hidden(battery_icon_label_, !show_battery_overlay);
   set_hidden(battery_pct_label_, !show_battery_overlay);
-  set_hidden(nozzle_prefix_label_, !dashboard_metrics_visible);
+  set_hidden(nozzle_prefix_label_, !dashboard_metrics_visible || !show_metric_icons);
   set_hidden(nozzle_value_label_, !dashboard_metrics_visible);
   set_hidden(nozzle_aux_label_, !dashboard_metrics_visible || !nozzle_aux_visible_);
-  set_hidden(bed_prefix_label_, !dashboard_metrics_visible);
+  set_hidden(bed_prefix_label_, !dashboard_metrics_visible || !show_metric_icons);
   set_hidden(bed_value_label_, !dashboard_metrics_visible);
   set_hidden(bed_aux_label_, !dashboard_metrics_visible || !bed_aux_visible_);
   set_hidden(remaining_row_, !dashboard_metrics_visible);

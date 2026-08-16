@@ -1069,6 +1069,10 @@ PrinterSnapshot merge_status_sources(const PrinterSnapshot& local_snapshot, bool
       snapshot.detail = cloud_snapshot.detail;
     }
   }
+  if (source_mode == SourceMode::kHybrid && snapshot.status_source == FieldSource::kLocal &&
+      local_snapshot.local_connected && !local_snapshot.detail.empty()) {
+    snapshot.detail = local_snapshot.detail;
+  }
 
   if (snapshot.stage.empty()) {
     if (snapshot.status_source == FieldSource::kLocal) {
