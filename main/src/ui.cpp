@@ -48,19 +48,19 @@ constexpr char kTag[] = "printsphere.ui";
 constexpr size_t kImagePersistentReserveBytes = 20U * 1024U;
 constexpr int kDefaultBrightnessPercent = 80;
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
-constexpr int kRingStrokeWidth = 16;
-constexpr int kStatusArcSize = 318;
-constexpr int kRemainingRowY = 126;
-constexpr int kDashboardTextWidth = 260;
-constexpr int kLayerRowWidth = 300;
-constexpr int kStatusLabelY = -72;
-constexpr int kDetailLabelY = 88;
-constexpr int kLayerRowY = 44;
-constexpr int kProgressLabelY = -134;
-constexpr int kBatteryLabelY = -106;
-constexpr int kTempIconX = 112;
-constexpr int kTempValueX = 72;
-constexpr int kTempAuxX = 92;
+constexpr int kRingStrokeWidth = 14;
+constexpr int kStatusArcSize = 306;
+constexpr int kRemainingRowY = 112;
+constexpr int kDashboardTextWidth = 220;
+constexpr int kLayerRowWidth = 250;
+constexpr int kStatusLabelY = -46;
+constexpr int kDetailLabelY = 32;
+constexpr int kLayerRowY = 48;
+constexpr int kProgressLabelY = -116;
+constexpr int kBatteryLabelY = -96;
+constexpr int kTempIconX = 96;
+constexpr int kTempValueX = 58;
+constexpr int kTempAuxX = 78;
 constexpr int kTempRowY = -4;
 constexpr int kAuxTempRowY = 24;
 #else
@@ -532,6 +532,11 @@ void apply_display_rotation_visual_offset(lv_obj_t* obj, DisplayRotation rotatio
   lv_obj_set_style_translate_y(obj, display_rotation_visual_offset_y(rotation), 0);
 }
 
+bool is_setup_access_snapshot(const PrinterSnapshot& snapshot) {
+  return snapshot.connection == PrinterConnectionState::kWaitingForCredentials ||
+         (!snapshot.wifi_connected && snapshot.setup_ap_active);
+}
+
 void set_label_text_if_changed(lv_obj_t* label, const char* text) {
   if (label == nullptr || text == nullptr) {
     return;
@@ -960,13 +965,21 @@ std::string lifecycle_label(const PrinterSnapshot& snapshot) {
 std::string setup_access_text(const PrinterSnapshot& snapshot) {
   std::string text;
   if (!snapshot.setup_ap_ssid.empty()) {
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+    text = snapshot.setup_ap_ssid;
+#else
     text = "AP: " + snapshot.setup_ap_ssid;
+#endif
   }
   if (!snapshot.setup_ap_password.empty()) {
     if (!text.empty()) {
       text += "\n";
     }
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+    text += snapshot.setup_ap_password;
+#else
     text += "PW: " + snapshot.setup_ap_password;
+#endif
   }
 
   const std::string ip = snapshot.setup_ap_ip.empty() ? "192.168.4.1" : snapshot.setup_ap_ip;
@@ -974,7 +987,11 @@ std::string setup_access_text(const PrinterSnapshot& snapshot) {
     if (!text.empty()) {
       text += "\n";
     }
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+    text += ip;
+#else
     text += "Open " + ip;
+#endif
   }
 
   return text;
@@ -3298,6 +3315,11 @@ void Ui::apply_page_visibility() {
   const bool on_page2 = !scrolling_ ? (active_page_ == kPageIdxPreview) : true;
   const bool on_page3 = !scrolling_ ? (active_page_ == kPageIdxCamera) : true;
   const bool settled_page1 = !scrolling_ && active_page_ == kPageIdxMain;
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  const bool compact_setup = on_page1 && is_setup_access_snapshot(last_snapshot_);
+#else
+  constexpr bool compact_setup = false;
+#endif
   // These labels live on lv_layer_top(), so the pager cannot clip them.  The
   // camera header uses the same position: on battery power (including while
   // charging) show the battery indicator there; on USB-only power show the
@@ -3319,17 +3341,18 @@ void Ui::apply_page_visibility() {
   set_hidden(page3_, !camera_page_available_);
   set_hidden(status_label_, !on_page1);
   set_hidden(detail_label_, !on_page1 || !detail_visible_ || show_portal_hint);
-  set_hidden(layer_row_, !on_page1);
+  set_hidden(progress_label_, compact_setup);
+  set_hidden(layer_row_, compact_setup || !on_page1);
   set_hidden(battery_icon_label_, !show_battery_overlay);
   set_hidden(battery_pct_label_, !show_battery_overlay);
-  set_hidden(nozzle_prefix_label_, !on_page1);
-  set_hidden(nozzle_value_label_, !on_page1);
-  set_hidden(nozzle_aux_label_, !on_page1 || !nozzle_aux_visible_);
-  set_hidden(bed_prefix_label_, !on_page1);
-  set_hidden(bed_value_label_, !on_page1);
-  set_hidden(bed_aux_label_, !on_page1 || !bed_aux_visible_);
-  set_hidden(remaining_row_, !on_page1);
-  set_hidden(badge_slot_, !on_page1);
+  set_hidden(nozzle_prefix_label_, compact_setup || !on_page1);
+  set_hidden(nozzle_value_label_, compact_setup || !on_page1);
+  set_hidden(nozzle_aux_label_, compact_setup || !on_page1 || !nozzle_aux_visible_);
+  set_hidden(bed_prefix_label_, compact_setup || !on_page1);
+  set_hidden(bed_value_label_, compact_setup || !on_page1);
+  set_hidden(bed_aux_label_, compact_setup || !on_page1 || !bed_aux_visible_);
+  set_hidden(remaining_row_, compact_setup || !on_page1);
+  set_hidden(badge_slot_, compact_setup || !on_page1);
   set_hidden(portal_hint_label_, !show_portal_hint);
   set_hidden(page2_image_, !on_page2 || !preview_image_visible_);
   set_hidden(page3_image_, !on_page3 || !camera_image_visible_);
