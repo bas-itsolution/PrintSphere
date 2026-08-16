@@ -96,7 +96,9 @@ esp_err_t esp_lcd_touch_new_i2c_cst816(const esp_lcd_panel_io_handle_t io,
     }
 
     ESP_GOTO_ON_ERROR(cst816_reset(touch), err, TAG, "reset failed");
-    ESP_GOTO_ON_ERROR(cst816_read_id(touch), err, TAG, "read id failed");
+    if (cst816_read_id(touch) != ESP_OK) {
+        ESP_LOGW(TAG, "touch chip id unavailable; continuing with CST816-compatible reads");
+    }
 
     uint8_t autosleep_off = 1;
     (void)cst816_i2c_write(touch, CST816_AUTOSLEEP_REG, &autosleep_off, 1);
