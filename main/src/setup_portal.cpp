@@ -1699,6 +1699,7 @@ esp_err_t SetupPortal::handle_root(httpd_req_t* request) {
       html += " selected";
     }
     html += ">CN</option></select></div>";
+    html += "<div class=\"hint-box\"><strong>Google sign-in:</strong> If your Bambu Lab account was created with Google, set a Bambu Lab account password in the Bambu app/account first, then use that Bambu password here. Google OAuth cannot be completed from this device.</div>";
     html += "<div class=\"hint-box\"><strong>Printer Status:</strong> <span id=\"cloud-detail\">";
     html += json_escape(cloud_snapshot.detail);
     html += "</span><div class=\"micro\" id=\"mqtt-cloud-telemetry\" style=\"margin-top:4px;color:#666;\"></div></div>";
@@ -4269,10 +4270,17 @@ esp_err_t SetupPortal::handle_cloud_connect(httpd_req_t* request) {
     }
   }
 
-  const bool login_still_pending = cloud_login_still_pending(current);
   if (current.setup_stage == CloudSetupStage::kFailed) {
     httpd_resp_set_status(request, "502 Bad Gateway");
   }
+  if (!current.configured &&
+      (cloud.is_configured() || can_reuse_cloud_session(cloud, stored_cloud, stored_cloud_access_token))) {
+    current.configured = true;
+    current.setup_stage = CloudSetupStage::kLoggingIn;
+    current.detail = cloud.is_configured() ? "Cloud credentials saved. Login is starting."
+                                           : "Cloud session restored. Login is starting.";
+  }
+  const bool login_still_pending = cloud_login_still_pending(current);
 
   std::string body = "{\"status\":\"";
   if (cloud_portal_ready(current)) {
