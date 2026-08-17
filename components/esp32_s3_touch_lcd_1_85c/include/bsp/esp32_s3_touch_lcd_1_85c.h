@@ -29,6 +29,10 @@ extern "C" {
 #define BSP_I2C_SDA (GPIO_NUM_11)
 #define BSP_I2C_NUM (0)
 
+#define BSP_TOUCH_I2C_SCL (GPIO_NUM_3)
+#define BSP_TOUCH_I2C_SDA (GPIO_NUM_1)
+#define BSP_TOUCH_I2C_NUM (1)
+
 #define BSP_LCD_SPI_NUM (SPI2_HOST)
 #define BSP_LCD_CS (GPIO_NUM_21)
 #define BSP_LCD_PCLK (GPIO_NUM_40)

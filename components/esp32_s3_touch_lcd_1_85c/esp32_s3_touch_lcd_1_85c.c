@@ -38,6 +38,8 @@ static const char *TAG = "ESP32-S3-Touch-LCD-1.85C";
 
 static i2c_master_bus_handle_t s_i2c_handle = NULL;
 static bool s_i2c_initialized = false;
+static i2c_master_bus_handle_t s_touch_i2c_handle = NULL;
+static bool s_touch_i2c_initialized = false;
 static bool s_backlight_initialized = false;
 static esp_io_expander_handle_t s_io_expander = NULL;
 static esp_lcd_panel_handle_t s_panel_handle = NULL;
@@ -154,6 +156,34 @@ i2c_master_bus_handle_t bsp_i2c_get_handle(void) {
         return NULL;
     }
     return s_i2c_handle;
+}
+
+static esp_err_t touch_i2c_init(void) {
+    if (s_touch_i2c_initialized) {
+        return ESP_OK;
+    }
+    const i2c_master_bus_config_t config = {
+        .clk_source = I2C_CLK_SRC_DEFAULT,
+        .i2c_port = BSP_TOUCH_I2C_NUM,
+        .scl_io_num = BSP_TOUCH_I2C_SCL,
+        .sda_io_num = BSP_TOUCH_I2C_SDA,
+        .glitch_ignore_cnt = 7,
+        .flags =
+            {
+                .enable_internal_pullup = true,
+            },
+    };
+    ESP_RETURN_ON_ERROR(i2c_new_master_bus(&config, &s_touch_i2c_handle), TAG,
+                        "touch i2c init failed");
+    s_touch_i2c_initialized = true;
+    return ESP_OK;
+}
+
+static i2c_master_bus_handle_t touch_i2c_get_handle(void) {
+    if (touch_i2c_init() != ESP_OK) {
+        return NULL;
+    }
+    return s_touch_i2c_handle;
 }
 
 esp_io_expander_handle_t bsp_io_expander_init(void) {
@@ -282,8 +312,9 @@ static lv_indev_t *bsp_display_indev_init(const bsp_display_cfg_t *cfg, lv_displ
         .scl_speed_hz = 100000,
     };
     esp_lcd_panel_io_handle_t tp_io = NULL;
-    ESP_RETURN_ON_FALSE(bsp_i2c_get_handle() != NULL, NULL, TAG, "i2c handle unavailable");
-    if (esp_lcd_new_panel_io_i2c(s_i2c_handle, &tp_io_config, &tp_io) != ESP_OK) {
+    ESP_RETURN_ON_FALSE(touch_i2c_get_handle() != NULL, NULL, TAG,
+                        "touch i2c handle unavailable");
+    if (esp_lcd_new_panel_io_i2c(s_touch_i2c_handle, &tp_io_config, &tp_io) != ESP_OK) {
         ESP_LOGE(TAG, "touch io init failed");
         return NULL;
     }

@@ -50,12 +50,12 @@ constexpr int kDefaultBrightnessPercent = 80;
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
 constexpr int kRingStrokeWidth = 12;
 constexpr int kStatusArcSize = 356;
-constexpr int kRemainingRowY = 112;
+constexpr int kRemainingRowY = 132;
 constexpr int kDashboardTextWidth = 188;
 constexpr int kLayerRowWidth = 230;
 constexpr int kStatusLabelY = -72;
 constexpr int kDetailLabelY = 44;
-constexpr int kLayerRowY = 58;
+constexpr int kLayerRowY = 72;
 constexpr int kProgressLabelY = -110;
 constexpr int kBatteryLabelY = -88;
 constexpr int kTempIconX = 76;
@@ -3298,7 +3298,7 @@ esp_err_t Ui::build_dashboard() {
   remaining_label_ = lv_label_create(remaining_row_);
   set_label_text_if_changed(remaining_label_, "--m");
 #if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
-  lv_obj_set_style_text_font(remaining_label_, dosis32, 0);
+  lv_obj_set_style_text_font(remaining_label_, dosis20, 0);
 #else
   lv_obj_set_style_text_font(remaining_label_, dosis40, 0);
 #endif
@@ -3533,9 +3533,14 @@ void Ui::apply_page_visibility() {
       (last_snapshot_.battery_present || last_snapshot_.charging) &&
       (settled_page1 || (!scrolling_ && active_page_ == kPageIdxCamera));
   const bool portal_hint_has_priority = portal_pin_active_ || portal_session_active_;
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  const bool suppress_nonpriority_portal_hint = dashboard_metrics_visible;
+#else
+  constexpr bool suppress_nonpriority_portal_hint = false;
+#endif
   const bool show_portal_hint =
       settled_page1 && !portal_hint_text_.empty() &&
-      (portal_hint_has_priority || !detail_visible_);
+      (portal_hint_has_priority || (!detail_visible_ && !suppress_nonpriority_portal_hint));
 
   for (int u = 0; u < kMaxAmsUnits; ++u) {
     if (ams_pages_[u] != nullptr) {
@@ -4010,8 +4015,22 @@ void Ui::handle_screen_event(lv_event_t* event) {
 void Ui::update_portal_access_visuals_locked() {
   const bool show_page1 = !scrolling_ && active_page_ == kPageIdxMain;
   const bool portal_hint_has_priority = portal_pin_active_ || portal_session_active_;
+#if defined(PRINTSPHERE_HW_VARIANT_LCD_1_85C)
+  const bool suppress_nonpriority_portal_hint =
+      show_page1 &&
+      (last_snapshot_.connection == PrinterConnectionState::kOnline ||
+       last_snapshot_.print_active ||
+       last_snapshot_.nozzle_temp_known ||
+       last_snapshot_.bed_temp_known ||
+       last_snapshot_.remaining_seconds > 0 ||
+       last_snapshot_.current_layer > 0 ||
+       last_snapshot_.total_layers > 0);
+#else
+  constexpr bool suppress_nonpriority_portal_hint = false;
+#endif
   const bool show_hint = portal_hint_label_ != nullptr && show_page1 && !portal_hint_text_.empty() &&
-                         (portal_hint_has_priority || !detail_visible_);
+                         (portal_hint_has_priority ||
+                          (!detail_visible_ && !suppress_nonpriority_portal_hint));
   set_hidden(portal_hint_label_, !show_hint);
   if (show_hint) {
     set_label_text_if_changed(portal_hint_label_, portal_hint_text_);
