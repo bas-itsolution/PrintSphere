@@ -1951,8 +1951,11 @@ esp_err_t BambuCloudClient::start() {
     return ESP_OK;
   }
 
-  const BaseType_t result =
-      xTaskCreate(&BambuCloudClient::task_entry, "bambu_cloud", 16384, this, 4, &task_handle_);
+  // Keep the large cloud worker stack out of internal RAM on the compact 1.85C
+  // build; Wi-Fi, LVGL and MQTT all compete for contiguous internal blocks.
+  const BaseType_t result = xTaskCreateWithCaps(
+      &BambuCloudClient::task_entry, "bambu_cloud", 16384, this, 4, &task_handle_,
+      MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
   return result == pdPASS ? ESP_OK : ESP_FAIL;
 }
 
