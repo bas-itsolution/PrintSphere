@@ -78,7 +78,7 @@ esp_err_t esp_lcd_touch_new_i2c_cst816(const esp_lcd_panel_io_handle_t io,
         const gpio_config_t int_cfg = {
             .pin_bit_mask = 1ULL << touch->config.int_gpio_num,
             .mode = GPIO_MODE_INPUT,
-            .pull_up_en = GPIO_PULLUP_DISABLE,
+            .pull_up_en = GPIO_PULLUP_ENABLE,
             .pull_down_en = GPIO_PULLDOWN_DISABLE,
             .intr_type = touch->config.levels.interrupt ? GPIO_INTR_POSEDGE : GPIO_INTR_NEGEDGE,
         };
@@ -120,9 +120,34 @@ static esp_err_t cst816_read_data(esp_lcd_touch_handle_t tp) {
     uint16_t x = 0;
     uint16_t y = 0;
     static int log_reads_remaining = 12;
+    static int log_failures_remaining = 8;
 
-    ESP_RETURN_ON_ERROR(cst816_i2c_read(tp, CST816_DATA_REG, point, sizeof(point)), TAG,
-                        "point read failed");
+    if (tp->config.int_gpio_num != GPIO_NUM_NC &&
+        gpio_get_level(tp->config.int_gpio_num) != tp->config.levels.interrupt) {
+        taskENTER_CRITICAL(&tp->data.lock);
+        tp->data.points = 0;
+        taskEXIT_CRITICAL(&tp->data.lock);
+        return ESP_OK;
+    }
+
+    esp_err_t read_err = ESP_FAIL;
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        read_err = cst816_i2c_read(tp, CST816_DATA_REG, point, sizeof(point));
+        if (read_err == ESP_OK) {
+            break;
+        }
+        vTaskDelay(pdMS_TO_TICKS(2));
+    }
+    if (read_err != ESP_OK) {
+        if (log_failures_remaining > 0) {
+            ESP_LOGW(TAG, "point read failed while INT active: %s", esp_err_to_name(read_err));
+            --log_failures_remaining;
+        }
+        taskENTER_CRITICAL(&tp->data.lock);
+        tp->data.points = 0;
+        taskEXIT_CRITICAL(&tp->data.lock);
+        return ESP_OK;
+    }
     point_num = point[0] & 0x0F;
     if (point_num > 0 && point_num <= CST816_MAX_POINTS) {
         x = (((uint16_t)point[1] & 0x0F) << 8) | point[2];

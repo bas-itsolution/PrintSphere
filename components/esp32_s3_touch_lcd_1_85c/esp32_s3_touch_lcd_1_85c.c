@@ -129,6 +129,10 @@ esp_err_t bsp_i2c_init(void) {
         .scl_io_num = BSP_I2C_SCL,
         .sda_io_num = BSP_I2C_SDA,
         .glitch_ignore_cnt = 7,
+        .flags =
+            {
+                .enable_internal_pullup = true,
+            },
     };
     ESP_RETURN_ON_ERROR(i2c_new_master_bus(&config, &s_i2c_handle), TAG, "i2c init failed");
     s_i2c_initialized = true;
@@ -275,7 +279,7 @@ static lv_indev_t *bsp_display_indev_init(const bsp_display_cfg_t *cfg, lv_displ
             {
                 .disable_control_phase = 1,
             },
-        .scl_speed_hz = 400000,
+        .scl_speed_hz = 100000,
     };
     esp_lcd_panel_io_handle_t tp_io = NULL;
     ESP_RETURN_ON_FALSE(bsp_i2c_get_handle() != NULL, NULL, TAG, "i2c handle unavailable");
